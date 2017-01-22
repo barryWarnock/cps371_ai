@@ -1,0 +1,81 @@
+* classes
+** Searchable
+- get_possible_moves
+- do_move(move)
+- get_state
+*** Cube
+- rotate(move)
+Front: 0, Back: 1, Right: 4, Left: 5, Top: 3, Bottom: 2
+
+all sections on an individual face are indexed 'upper left' to 'lower right'
+looking along the axis of the cube in the positive direction
+
+-----X
+|\
+| \
+Y  Z
+
+slices are top to bottom, left to right looking along the axis in the positive direction
+
+store as a 1d array of length 6*n*n where an individual face section is 
+indexed at n*n*face#+(y*n)+x
+|---+---+---|
+| 0 | 1 | 2 |
+|---+---+---|
+| 3 | 4 | 5 |
+|---+---+---|
+| 6 | 7 | 8 | 
+|---+---+---|  
+
+| 0,0 | 1,0 | 2,0 |
+|-----+-----+-----|
+| 0,1 | 1,1 | 2,1 |
+|-----+-----+-----|
+| 0,2 | 1,2 | 2,2 |
+
+**** rotations
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+|   |   |   |   | 27 | 28 | 29 |   |    |    |    |   |    |    |    |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+|   |   |   |   | 30 | 31 | 32 |   |    |    |    |   |    |    |    |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+|   |   |   |   | 33 | 34 | 35 |   |    |    |    |   |    |    |    |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+|   |   |   |   |    |    |    |   |    |    |    |   |    |    |    |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+| 0 | 1 | 2 |   | 36 | 37 | 38 |   |  9 | 10 | 11 |   | 45 | 46 | 47 |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+| 3 | 4 | 5 |   | 39 | 40 | 41 |   | 12 | 13 | 14 |   | 48 | 49 | 50 |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+| 6 | 7 | 8 |   | 42 | 43 | 44 |   | 15 | 16 | 17 |   | 51 | 52 | 53 |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+|   |   |   |   |    |    |    |   |    |    |    |   |    |    |    |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+|   |   |   |   | 18 | 19 | 20 |   |    |    |    |   |    |    |    |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+|   |   |   |   | 21 | 22 | 23 |   |    |    |    |   |    |    |    |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+|   |   |   |   | 24 | 25 | 26 |   |    |    |    |   |    |    |    |
+|---+---+---+---+----+----+----+---+----+----+----+---+----+----+----|
+                            
+s = slice#
+
+| axis | direction | face | operation (on index) |
+|------+-----------+------+----------------------|
+| Y    | Cw        |    1 | 1->5                 |
+| Y    | CW        |    4 | 4->1                 |
+| Y    | CW        |    5 | 5->0                 |
+| Y    | CW        |    0 | 0->4                 |
+|      |           |      |                      |
+
+** Search
+- find_goal(Searchable, state)
+*** A*
+heuristic: how far are my reds from the red face
+*** BFS
+
+* definitions
+move: a string defining a move Face, slice, dir. eg "0CCW2" or "B1CL"
+state: a string defining the current state, for example a 2x2 solved cube might look like "RRRRBBBBGGGGOOOOYYYYWWWW"
+       the string would be length 6*n*n in the order F Ba L R T Bo
+(binary encode both of those as small as possible)
