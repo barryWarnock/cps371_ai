@@ -97,8 +97,8 @@ to_same(v, size) = {v}
 |------+-----------+-----------+---------+----------------------+----------------------|
 | Z    | CCW       |         2 |       5 | to_different(from_y) | to_different(from_x) |
 | Z    | CCW       |         3 |       4 | to_different(from_y) | to_different(from_x) |
-| Z    | CCW       |         4 |       2 | to_different(from_y) | from_x               |
-| Z    | CCW       |         5 |       3 | to_different(from_y) | from_x               |
+| Z    | CCW       |         4 |       2 | to_different(from_y) | to_different(from_x) |
+| Z    | CCW       |         5 |       3 | to_different(from_y) | to_different(from_x) |
 |------+-----------+-----------+---------+----------------------+----------------------|
 
 general rotation pseudo-code:

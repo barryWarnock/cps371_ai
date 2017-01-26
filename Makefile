@@ -1,4 +1,4 @@
-all: Rubiks bin/Rubiks
+all: Rubiks
 
 Rubiks: main.o rubiks_cube.o 
 	g++ build/main.o build/rubiks_cube.o -o bin/Rubiks
