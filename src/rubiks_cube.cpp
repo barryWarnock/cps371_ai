@@ -3,6 +3,24 @@
 #include <functional>
 #include "../include/rubiks_cube.h"
 
+#ifndef INTELLIJ
+#define WHITE_STRING "\x1b[38;2;255;255;255m\u25A0\033[0;39m"
+#define YELLOW_STRING "\x1b[38;2;255;255;0m\u25A0\033[0;39m"
+#define BLUE_STRING "\x1b[38;2;0;0;255m\u25A0\033[0;39m"
+#define GREEN_STRING "\x1b[38;2;0;255;0m\u25A0\033[0;39m"
+#define ORANGE_STRING "\x1b[38;2;255;106;00m\u25A0\033[0;39m"
+#define RED_STRING "\x1b[38;2;255;0;0m\u25A0\033[0;39m"
+#endif
+
+#ifdef INTELLIJ
+#define WHITE_STRING "w"
+#define YELLOW_STRING "y"
+#define BLUE_STRING "b"
+#define GREEN_STRING "g"
+#define ORANGE_STRING "o"
+#define RED_STRING "r"
+#endif
+
 using namespace std;
 
 Rubiks_Cube::Rubiks_Cube(int n) {
@@ -41,6 +59,23 @@ Rubiks_Cube::Rubiks_Cube(int n, std::string startState) {
     this->cubeString = startState;
 }
 
+string colour_to_string(Colour colour) {
+    switch (colour) {
+        case WHITE:
+            return WHITE_STRING;
+        case YELLOW:
+            return YELLOW_STRING;
+        case BLUE:
+            return BLUE_STRING;
+        case GREEN:
+            return GREEN_STRING;
+        case ORANGE:
+            return ORANGE_STRING;
+        case RED:
+            return RED_STRING;
+    }
+}
+
 string Rubiks_Cube::pretty_print_state() {
     string prettyString = "";
 
@@ -50,7 +85,7 @@ string Rubiks_Cube::pretty_print_state() {
         }
         for (int x = 0; x < n; x++) {
             int flippedY = flip_index(y);
-            prettyString += read_logical(5, x, flippedY);
+            prettyString += colour_to_string(read_logical(5, x, flippedY));
         }
         prettyString += '\n';
     }
@@ -74,10 +109,10 @@ string Rubiks_Cube::pretty_print_state() {
             }
             for (int x = 0; x < n; x++) {
                 int logicalX = x;
-                if (x > 1) {
+                if (face % 2 == 1) {
                     logicalX = flip_index(x);
                 }
-                prettyString += read_logical(face, logicalX, y);
+                prettyString += colour_to_string(read_logical(face, logicalX, y));
             }
         }
         prettyString += '\n';
@@ -88,7 +123,7 @@ string Rubiks_Cube::pretty_print_state() {
             prettyString += " ";
         }
         for (int x = 0; x < n; x++) {
-            prettyString += read_logical(4, x, y);
+            prettyString += colour_to_string(read_logical(4, x, y));
         }
         prettyString += '\n';
     }
@@ -242,7 +277,7 @@ Rubiks_Cube Rubiks_Cube::do_move(Axis axis, int slice, Direction direction) {
             faces = {2,3,4,5};
             translate_x_same_parity = y_swap;
             translate_x_different_parity = y_swap;
-            translate_y_same_parity = x_identity;
+            translate_y_same_parity = x_swap;
             translate_y_different_parity = x_swap;
             break;
     }
@@ -311,5 +346,6 @@ void Rubiks_Cube::rotate_face(int face, Direction direction) {
     if (face < 0 or face > 5) {
         throw std::out_of_range("face");
     }
+
 }
 
