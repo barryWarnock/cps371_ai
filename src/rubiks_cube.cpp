@@ -346,6 +346,6 @@ void Rubiks_Cube::rotate_face(int face, Direction direction) {
     if (face < 0 or face > 5) {
         throw std::out_of_range("face");
     }
-
+    
 }
 
