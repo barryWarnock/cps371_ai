@@ -54,12 +54,12 @@ Rubiks_Cube::Rubiks_Cube(int n) {
     }
 }
 
-Rubiks_Cube::Rubiks_Cube(int n, std::string startState) {
+Rubiks_Cube::Rubiks_Cube(int n, string startState) {
     this->n = n;
     this->cubeString = startState;
 }
 
-string colour_to_string(Colour colour) {
+string colour_to_string(Cube_Colour colour) {
     switch (colour) {
         case WHITE:
             return WHITE_STRING;
@@ -131,8 +131,45 @@ string Rubiks_Cube::pretty_print_state() {
     return prettyString;
 }
 
-std::vector<Searchable> Rubiks_Cube::generate_children() {
-    return vector<Searchable>();
+std::vector<Search_Node*> Rubiks_Cube::generate_children() {
+    vector<Search_Node*> children = vector<Search_Node*>();
+
+    for (int axis = X; axis <= Z; axis++) {
+        for (int direction = CLOCKWISE; direction <= COUNTER_CLOCKWISE; direction++) {
+            for (int slice = 0; slice < n; slice++) {
+                Search_Node* node = new Search_Node;
+                node->self = this->do_move((Cube_Axis)axis, slice, (Cube_Direction)direction);
+                string move = "";
+                switch ((Cube_Axis)axis) {
+                    case X:
+                        move += 'X';
+                        break;
+                    case Y:
+                        move += 'Y';
+                        break;
+                    case Z:
+                        move += 'Z';
+                        break;
+                }
+
+                move += to_string(slice);
+
+                switch ((Cube_Direction)direction) {
+                    case CLOCKWISE:
+                        move += "CW";
+                        break;
+                    case COUNTER_CLOCKWISE:
+                        move += "CCW";
+                        break;
+                }
+
+                node->move = move;
+
+                children.push_back(node);
+            }
+        }
+    }
+    return children;
 }
 
 string Rubiks_Cube::get_state() {
@@ -147,11 +184,11 @@ int Rubiks_Cube::index_from_fxy(int face, int x, int y) {
     return (n*n*face)+(y*n)+x;
 }
 
-Colour Rubiks_Cube::read_logical(int face, int x, int y) {
-    return (Colour)this->cubeString[index_from_fxy(face,x,y)];
+Cube_Colour Rubiks_Cube::read_logical(int face, int x, int y) {
+    return (Cube_Colour)this->cubeString[index_from_fxy(face,x,y)];
 }
 
-void Rubiks_Cube::write_logical(int face, int x, int y, Colour value) {
+void Rubiks_Cube::write_logical(int face, int x, int y, Cube_Colour value) {
     this->cubeString[index_from_fxy(face,x,y)] = (char)value;
 }
 
@@ -159,7 +196,7 @@ int Rubiks_Cube::flip_index(int index) {
     return n-1-index;
 }
 
-int Rubiks_Cube::translate_face(int face, Axis axis, Direction direction) {
+int Rubiks_Cube::translate_face(int face, Cube_Axis axis, Cube_Direction direction) {
     switch (axis) {
         case X:
             if (direction == CLOCKWISE) {
@@ -239,12 +276,10 @@ int Rubiks_Cube::translate_face(int face, Axis axis, Direction direction) {
     }
 }
 
-Rubiks_Cube Rubiks_Cube::do_move(Axis axis, int slice, Direction direction) {
+Rubiks_Cube* Rubiks_Cube::do_move(Cube_Axis axis, int slice, Cube_Direction direction) {
     if (slice < 0 or slice > n-1) {
         throw std::out_of_range("slice");
     }
-
-    Rubiks_Cube newCube = *this;
 
     vector<int> faces = {};
     std::function<int(int,int)> translate_x_same_parity;
@@ -260,7 +295,6 @@ Rubiks_Cube Rubiks_Cube::do_move(Axis axis, int slice, Direction direction) {
     switch (axis) {
         case X:
             faces = {0,1,4,5};
-
             translate_x_same_parity = x_identity;
             translate_x_different_parity = x_identity;
             translate_y_same_parity = y_identity;
@@ -282,7 +316,7 @@ Rubiks_Cube Rubiks_Cube::do_move(Axis axis, int slice, Direction direction) {
             break;
     }
 
-    auto determine_slice_axis = [this](int face, Axis axis){
+    auto determine_slice_axis = [this](int face, Cube_Axis axis){
         if (axis == X or axis == Y) {
             return axis;
         } else {
@@ -303,7 +337,7 @@ Rubiks_Cube Rubiks_Cube::do_move(Axis axis, int slice, Direction direction) {
         }
     };
 
-    auto slice_to_index = [this](int slice, Axis sliceAxis, Axis rotation) {
+    auto slice_to_index = [this](int slice, Cube_Axis sliceAxis, Cube_Axis rotation) {
         if (rotation == X or rotation == Y) {
             return slice;
         } else {
@@ -315,10 +349,12 @@ Rubiks_Cube Rubiks_Cube::do_move(Axis axis, int slice, Direction direction) {
         }
     };
 
+    Rubiks_Cube* newCube = new Rubiks_Cube(n, this->cubeString);
+
     for (int i = 0; i < 4; i++) {
         int face = faces[i];
         int toFace = translate_face(face, axis, direction);
-        Axis sliceAxis = determine_slice_axis(face, axis);
+        Cube_Axis sliceAxis = determine_slice_axis(face, axis);
         for (int j = 0; j < n; j++) {
             int x, y;
             if (sliceAxis == X) {
@@ -336,16 +372,116 @@ Rubiks_Cube Rubiks_Cube::do_move(Axis axis, int slice, Direction direction) {
                 toX = translate_x_different_parity(x, y);
                 toY = translate_y_different_parity(x, y);
             }
-            newCube.write_logical(toFace, toX, toY, this->read_logical(face, x, y));
+            newCube->write_logical(toFace, toX, toY, this->read_logical(face, x, y));
         }
     }
+
+    //if the slice is on the edge make sure the right face is rotated
+    if (slice == 0 or slice == n-1) {
+        int face;
+        switch (axis) {
+            case X:
+                if (slice == 0) {
+                    face = 2;
+                } else if (slice == n-1) {
+                    face = 3;
+                }
+                break;
+            case Y:
+                if (slice == 0) {
+                    face = 4;
+                } else if (slice == n-1) {
+                    face = 5;
+                }
+                break;
+            case Z:
+                if (slice == 0) {
+                    face = 1;
+                } else if (slice == n-1) {
+                    face = 0;
+                }
+                break;
+        }
+        *newCube = newCube->rotate_face(face, direction);
+    }
+
     return newCube;
 }
 
-void Rubiks_Cube::rotate_face(int face, Direction direction) {
+//direction is the direction the slice is moving, not relative to the face itself
+Rubiks_Cube Rubiks_Cube::rotate_face(int face, Cube_Direction direction) {
     if (face < 0 or face > 5) {
         throw std::out_of_range("face");
     }
 
+    std::function<int(int)> translate_x;
+    std::function<int(int)> translate_y;
+
+    switch (face) {
+        case 0:
+            if (direction == CLOCKWISE) {
+                translate_x = [this](int y){return this->flip_index(y);};
+                translate_y = [this](int x){return x;};
+            } else if (direction == COUNTER_CLOCKWISE) {
+                translate_x = [this](int y){return y;};
+                translate_y = [this](int x){return this->flip_index(x);};
+            }
+            break;
+        case 1:
+            if (direction == CLOCKWISE) {
+                translate_x = [this](int y){return this->flip_index(y);};
+                translate_y = [this](int x){return x;};
+            } else if (direction == COUNTER_CLOCKWISE) {
+                translate_x = [this](int y){return y;};
+                translate_y = [this](int x){return this->flip_index(x);};
+            }
+            break;
+        case 2:
+            if (direction == CLOCKWISE) {
+                translate_x = [this](int y){return y;};
+                translate_y = [this](int x){return x;};
+            } else if (direction == COUNTER_CLOCKWISE) {
+                translate_x = [this](int y){return y;};
+                translate_y = [this](int x){return x;};
+            }
+            break;
+        case 3:
+            if (direction == CLOCKWISE) {
+                translate_x = [this](int y){return y;};
+                translate_y = [this](int x){return x;};
+            } else if (direction == COUNTER_CLOCKWISE) {
+                translate_x = [this](int y){return y;};
+                translate_y = [this](int x){return x;};
+            }
+            break;
+        case 4:
+            if (direction == CLOCKWISE) {
+                translate_x = [this](int y){return y;};
+                translate_y = [this](int x){return x;};
+            } else if (direction == COUNTER_CLOCKWISE) {
+                translate_x = [this](int y){return y;};
+                translate_y = [this](int x){return x;};
+            }
+            break;
+        case 5:
+            if (direction == CLOCKWISE) {
+                translate_x = [this](int y){return y;};
+                translate_y = [this](int x){return x;};
+            } else if (direction == COUNTER_CLOCKWISE) {
+                translate_x = [this](int y){return y;};
+                translate_y = [this](int x){return x;};
+            }
+            break;
+    }
+
+    Rubiks_Cube newCube = *this;
+
+    for (int x = 0; x < n; x++) {
+        for (int y = 0; y < n; y++) {
+            newCube.write_logical(face, translate_x(y), translate_y(x), this->read_logical(face, x, y));
+        }
+    }
+
+    return newCube;
 }
 
