@@ -6,7 +6,7 @@
 using namespace std;
 
 vector<Search_Node*> Breadth_First_Search::find_path(Searchable *start, Searchable *goal) {
-    std::list<Search_Node*> openList = list<Search_Node*>();
+    list<Search_Node*> openList = list<Search_Node*>();
     vector<Search_Node*> closedList = vector<Search_Node*>();
 
     Search_Node* startNode = new Search_Node;
@@ -25,7 +25,7 @@ vector<Search_Node*> Breadth_First_Search::find_path(Searchable *start, Searchab
         found = true;
     }
 
-    vector<Search_Node*> path = vector();
+    vector<Search_Node*> path = vector<Search_Node*>();
     Search_Node* currentNode = final;
     while (currentNode) {
         path.push_back(currentNode);
