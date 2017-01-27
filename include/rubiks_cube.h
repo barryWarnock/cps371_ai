@@ -8,7 +8,7 @@
 #include <string>
 #include "searchable.h"
 
-enum Colour{
+enum Cube_Colour{
     WHITE = 'w',
     YELLOW = 'y',
     BLUE = 'b',
@@ -17,15 +17,15 @@ enum Colour{
     RED = 'r'
 };
 
-enum Axis{
-    X,
-    Y,
-    Z
+enum Cube_Axis{
+    X = 0,
+    Y = 1,
+    Z = 2
 };
 
-enum Direction{
-    CLOCKWISE,
-    COUNTER_CLOCKWISE
+enum Cube_Direction{
+    CLOCKWISE = 0,
+    COUNTER_CLOCKWISE = 1
 };
 
 class Rubiks_Cube : public Searchable{
@@ -35,9 +35,9 @@ protected:
 
     int index_from_fxy(int face, int x, int y);
 
-    Colour read_logical(int face, int x, int y);
+    Cube_Colour read_logical(int face, int x, int y);
 
-    void write_logical(int face, int x, int y, Colour value);
+    void write_logical(int face, int x, int y, Cube_Colour value);
 
     /**
      * used when going from an even face to an odd face or vice-versa.
@@ -46,18 +46,18 @@ protected:
      */
     int flip_index(int index);
 
-    int translate_face(int face, Axis axis, Direction direction);
+    int translate_face(int face, Cube_Axis axis, Cube_Direction direction);
 
-    void rotate_face(int face, Direction direction);
+    Rubiks_Cube rotate_face(int face, Cube_Direction direction);
 
 public:
     Rubiks_Cube(int n);
     Rubiks_Cube(int n, std::string startState);
-    virtual std::vector<Searchable> generate_children();
+    virtual std::vector<Search_Node*> generate_children();
     virtual std::string get_state();
     virtual int run_heuristic();
     std::string pretty_print_state();
-    Rubiks_Cube do_move(Axis axis, int slice, Direction direction);
+    Rubiks_Cube * do_move(Cube_Axis axis, int slice, Cube_Direction direction);
 };
 
 
