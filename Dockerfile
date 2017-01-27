@@ -1,4 +1,4 @@
-FROM gcc:4.9
+FROM gcc
 COPY . /usr/src/cube
 WORKDIR /usr/src/cube
 RUN make

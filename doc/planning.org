@@ -8,7 +8,6 @@
 - Search_Node parent
 - string move
 *** Cube
-- Cube rotate(slice, axis, direction)
 **** rotations
 - rotate(move)
 Front: 0, Back: 1, Right: 4, Left: 5, Top: 3, Bottom: 2
@@ -127,7 +126,6 @@ rotate(face, slice, axis, direction) {
 }
 
 ** Search
-- Search_Node find_path(Searchable from, Searchable goal)
 ** Search
 - find_goal(Searchable, state)
 *** A*
