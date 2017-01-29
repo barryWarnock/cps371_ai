@@ -138,7 +138,7 @@ std::vector<Search_Node*> Rubiks_Cube::generate_children() {
         for (int direction = CLOCKWISE; direction <= COUNTER_CLOCKWISE; direction++) {
             for (int slice = 0; slice < n; slice++) {
                 Search_Node* node = new Search_Node;
-                node->self = this->do_move((Cube_Axis)axis, slice, (Cube_Direction)direction);
+                node->self = shared_ptr<Rubiks_Cube>(this->do_move((Cube_Axis)axis, slice, (Cube_Direction)direction));
                 string move = "";
                 switch ((Cube_Axis)axis) {
                     case X:
@@ -402,14 +402,14 @@ Rubiks_Cube* Rubiks_Cube::do_move(Cube_Axis axis, int slice, Cube_Direction dire
                 }
                 break;
         }
-        *newCube = newCube->rotate_face(face, direction);
+        newCube->rotate_face(face, direction);
     }
 
     return newCube;
 }
 
 //direction is the direction the slice is moving, not relative to the face itself
-Rubiks_Cube Rubiks_Cube::rotate_face(int face, Cube_Direction direction) {
+void Rubiks_Cube::rotate_face(int face, Cube_Direction direction) {
     if (face < 0 or face > 5) {
         throw std::out_of_range("face");
     }
@@ -474,14 +474,17 @@ Rubiks_Cube Rubiks_Cube::rotate_face(int face, Cube_Direction direction) {
             break;
     }
 
-    Rubiks_Cube newCube = *this;
+    Rubiks_Cube tempCube = *this;
 
     for (int x = 0; x < n; x++) {
         for (int y = 0; y < n; y++) {
-            newCube.write_logical(face, translate_x(y), translate_y(x), this->read_logical(face, x, y));
+            this->write_logical(face, translate_x(y), translate_y(x), tempCube.read_logical(face, x, y));
         }
     }
-
-    return newCube;
 }
 
+bool Rubiks_Cube::equal_to(Searchable *other) {
+    Rubiks_Cube* otherCube = dynamic_cast<Rubiks_Cube*>(other);
+    if (!otherCube) return false;
+    else return this->cubeString == otherCube->cubeString;
+}
