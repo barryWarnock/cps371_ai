@@ -5,8 +5,7 @@
 #include <memory>
 #include "search.h"
 
-class Breadth_First_Search : protected Search {
-protected:
+class Breadth_First_Search : public Search {
 public:
     virtual std::shared_ptr<Search_Node> find_path(Searchable *start, Searchable *goal);
 };

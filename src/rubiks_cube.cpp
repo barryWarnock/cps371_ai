@@ -252,24 +252,24 @@ int Rubiks_Cube::translate_face(int face, Cube_Axis axis, Cube_Direction directi
             if (direction == CLOCKWISE) {
                 switch (face) {
                     case 2:
-                        return 4;
-                    case 3:
                         return 5;
+                    case 3:
+                        return 4;
                     case 4:
-                        return 3;
-                    case 5:
                         return 2;
+                    case 5:
+                        return 3;
                 }
             } else {
                 switch (face) {
                     case 2:
-                        return 5;
-                    case 3:
                         return 4;
+                    case 3:
+                        return 5;
                     case 4:
-                        return 2;
-                    case 5:
                         return 3;
+                    case 5:
+                        return 2;
                 }
             }
             break;
@@ -309,10 +309,15 @@ Rubiks_Cube* Rubiks_Cube::do_move(Cube_Axis axis, int slice, Cube_Direction dire
             break;
         case Z:
             faces = {2,3,4,5};
-            translate_x_same_parity = y_swap;
-            translate_x_different_parity = y_swap;
-            translate_y_same_parity = x_swap;
             translate_y_different_parity = x_swap;
+            translate_x_different_parity = y_swap;
+            if (direction == COUNTER_CLOCKWISE) {
+                translate_x_same_parity = y_identity;
+                translate_y_same_parity = x_swap;
+            } else {
+                translate_x_same_parity = y_swap;
+                translate_y_same_parity = x_identity;
+            }
             break;
     }
 
@@ -481,6 +486,10 @@ void Rubiks_Cube::rotate_face(int face, Cube_Direction direction) {
             this->write_logical(face, translate_x(y), translate_y(x), tempCube.read_logical(face, x, y));
         }
     }
+}
+
+int Rubiks_Cube::size() {
+    return this->n;
 }
 
 bool Rubiks_Cube::equal_to(Searchable *other) {

@@ -50,6 +50,7 @@ public:
     virtual std::vector<Search_Node*> generate_children();
     virtual std::string get_state();
     virtual int run_heuristic();
+    int size();
     std::string pretty_print_state();
     Rubiks_Cube * do_move(Cube_Axis axis, int slice, Cube_Direction direction);
     virtual bool equal_to(Searchable *other); //it's probably just me not understanding operator overloading well enough but it seemed needlessly messy for this
