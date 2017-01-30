@@ -35,9 +35,9 @@ shared_ptr<Search_Node> Breadth_First_Search::find_path(Searchable *start, Searc
             for (vector<Search_Node*>::iterator currentChild = children.begin(); currentChild != children.end(); currentChild++) {
                 auto search_list_func = [currentChild](shared_ptr<Search_Node> other){
                     return (*currentChild)->self->equal_to(other->self.get());};
-                if (find_if(openList.begin(), openList.end(), search_list_func) == openList.end()
+                if (find_if(openList.begin(), openList.end(), search_list_func) != openList.end()
                     or
-                    find_if(closedList.begin(), closedList.end(), search_list_func) == closedList.end()) {
+                    find_if(closedList.begin(), closedList.end(), search_list_func) != closedList.end()) {
                     continue;
                 }
                 (*currentChild)->parent = currentNode;
