@@ -32,17 +32,18 @@ shared_ptr<Search_Node> Breadth_First_Search::find_path(shared_ptr<Searchable> s
             finalNode = currentNode;
         } else {
            vector<Search_Node*> children = currentNode->self->generate_children();
-            for (vector<Search_Node*>::iterator currentChild = children.begin(); currentChild != children.end(); currentChild++) {
+            for (Search_Node* currentChild : children) {
                 auto search_list_func = [currentChild](shared_ptr<Search_Node> other){
-                    return (*currentChild)->self->equal_to(other->self.get());};
+                    return currentChild->self->equal_to(other->self.get());};
                 if (find_if(openList.begin(), openList.end(), search_list_func) != openList.end()
                     or
                     find_if(closedList.begin(), closedList.end(), search_list_func) != closedList.end()) {
+                    delete currentChild;
                     continue;
                 }
-                (*currentChild)->parent = currentNode;
-                (*currentChild)->depth = currentNode->depth += 1;
-                openList.push_back(shared_ptr<Search_Node>(*currentChild));
+                currentChild->parent = currentNode;
+                currentChild->depth = currentNode->depth + 1;
+                openList.push_back(shared_ptr<Search_Node>(currentChild));
             }
             closedList.push_back(currentNode);
         }

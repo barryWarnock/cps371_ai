@@ -395,9 +395,9 @@ Rubiks_Cube* Rubiks_Cube::do_move(Cube_Axis axis, int slice, Cube_Direction dire
                 break;
             case Y:
                 if (slice == 0) {
-                    face = 4;
-                } else if (slice == n-1) {
                     face = 5;
+                } else if (slice == n-1) {
+                    face = 4;
                 }
                 break;
             case Z:
@@ -415,34 +415,32 @@ Rubiks_Cube* Rubiks_Cube::do_move(Cube_Axis axis, int slice, Cube_Direction dire
 }
 Rubiks_Cube* Rubiks_Cube::do_move(string move) { //returns nullptr on an invalid move string
     regex axisRegex ("^[X-Z](?=\\d)");
-    regex sliceRegex ("\\d+(?=[CW]+$)");
-    regex directionRegex ("(?:CCW|CW)$");
+    regex sliceRegex ("\\d+(?=C?CW$)");
+    regex directionRegex ("C?CW$");
 
     smatch axisMatch;
     regex_search(move, axisMatch, axisRegex);
     smatch directionMatch;
-    regex_search(move, axisMatch, directionRegex);
+    regex_search(move, directionMatch, directionRegex);
     smatch sliceMatch;
-    regex_search(move, axisMatch, sliceRegex);
+    regex_search(move, sliceMatch, sliceRegex);
 
-    if (axisMatch.begin() == axisMatch.end()) {
+    if (axisMatch.empty()) {
         printf("no axis");
         return nullptr;
     }
-    if (sliceMatch.begin() == sliceMatch.end()) {
+    if (sliceMatch.empty()) {
         printf("no slice");
         return nullptr;
     }
-    if (directionMatch.begin() == directionMatch.end()) {
+    if (directionMatch.empty()) {
         printf("no direction");
         return nullptr;
     }
 
-
-
-    string directionString = *directionMatch.begin();
-    string axisString = *axisMatch.begin();
-    string sliceString = *sliceMatch.begin();
+    string directionString = directionMatch.str(0);
+    string axisString = axisMatch.str(0);
+    string sliceString = sliceMatch.str(0);
     Cube_Axis axis;
     int slice;
     Cube_Direction direction;
@@ -467,7 +465,7 @@ Rubiks_Cube* Rubiks_Cube::do_move(string move) { //returns nullptr on an invalid
         direction = COUNTER_CLOCKWISE;
     }
 
-    do_move(axis, slice, direction);
+    return do_move(axis, slice, direction);
 }
 
 //direction is the direction the slice is moving, not relative to the face itself
@@ -479,61 +477,12 @@ void Rubiks_Cube::rotate_face(int face, Cube_Direction direction) {
     std::function<int(int)> translate_x;
     std::function<int(int)> translate_y;
 
-    switch (face) {
-        case 0:
-            if (direction == CLOCKWISE) {
-                translate_x = [this](int y){return this->flip_index(y);};
-                translate_y = [this](int x){return x;};
-            } else if (direction == COUNTER_CLOCKWISE) {
-                translate_x = [this](int y){return y;};
-                translate_y = [this](int x){return this->flip_index(x);};
-            }
-            break;
-        case 1:
-            if (direction == CLOCKWISE) {
-                translate_x = [this](int y){return this->flip_index(y);};
-                translate_y = [this](int x){return x;};
-            } else if (direction == COUNTER_CLOCKWISE) {
-                translate_x = [this](int y){return y;};
-                translate_y = [this](int x){return this->flip_index(x);};
-            }
-            break;
-        case 2:
-            if (direction == CLOCKWISE) {
-                translate_x = [this](int y){return y;};
-                translate_y = [this](int x){return x;};
-            } else if (direction == COUNTER_CLOCKWISE) {
-                translate_x = [this](int y){return y;};
-                translate_y = [this](int x){return x;};
-            }
-            break;
-        case 3:
-            if (direction == CLOCKWISE) {
-                translate_x = [this](int y){return y;};
-                translate_y = [this](int x){return x;};
-            } else if (direction == COUNTER_CLOCKWISE) {
-                translate_x = [this](int y){return y;};
-                translate_y = [this](int x){return x;};
-            }
-            break;
-        case 4:
-            if (direction == CLOCKWISE) {
-                translate_x = [this](int y){return y;};
-                translate_y = [this](int x){return x;};
-            } else if (direction == COUNTER_CLOCKWISE) {
-                translate_x = [this](int y){return y;};
-                translate_y = [this](int x){return x;};
-            }
-            break;
-        case 5:
-            if (direction == CLOCKWISE) {
-                translate_x = [this](int y){return y;};
-                translate_y = [this](int x){return x;};
-            } else if (direction == COUNTER_CLOCKWISE) {
-                translate_x = [this](int y){return y;};
-                translate_y = [this](int x){return x;};
-            }
-            break;
+    if (direction == CLOCKWISE) {
+        translate_x = [this](int y){return this->flip_index(y);};
+        translate_y = [this](int x){return x;};
+    } else if (direction == COUNTER_CLOCKWISE) {
+        translate_x = [this](int y){return y;};
+        translate_y = [this](int x){return this->flip_index(x);};
     }
 
     Rubiks_Cube tempCube = *this;

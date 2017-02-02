@@ -53,6 +53,7 @@ void manually_rotate(shared_ptr<Rubiks_Cube> *cube) {
     if (!newCube) {
         cout << move << " is not a valid move, a valid move looks like [XYZ][slice#][CW|CCW] eg. X0CW" << endl;
     }
+    (*cube).reset(newCube);
 }
 
 void randomly_rotate(shared_ptr<Rubiks_Cube> *cube) {
@@ -106,4 +107,6 @@ void solve_cube(shared_ptr<Rubiks_Cube>* cube) {
     for (list<string>::iterator move = moves.begin(); move != moves.end(); move++) {
         cout << "    " << *move << endl;
     }
+
+    *cube = dynamic_pointer_cast<Rubiks_Cube>(solved->self);
 }
