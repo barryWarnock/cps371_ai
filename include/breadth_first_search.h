@@ -7,7 +7,7 @@
 
 class Breadth_First_Search : public Search {
 public:
-    virtual std::shared_ptr<Search_Node> find_path(Searchable *start, Searchable *goal);
+    virtual std::shared_ptr<Search_Node> find_path(std::shared_ptr<Searchable> start, std::shared_ptr<Searchable> goal);
 };
 
 

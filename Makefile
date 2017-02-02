@@ -20,3 +20,6 @@ build/ui.o: src/ui.cpp include/ui.h
 
 build/cube_ui.o: src/cube_ui.cpp include/cube_ui.h
 	g++ -c src/cube_ui.cpp -o build/cube_ui.o
+
+tests:
+	g++ test/cube_tests.cpp src/rubiks_cube.cpp -o test/run_tests

@@ -14,30 +14,30 @@ void cube_ui_main();
  * asks the user how big of a cube to make then creates it
  * @return the new cube
  */
-std::unique_ptr<Rubiks_Cube> create_cube();
+std::shared_ptr<Rubiks_Cube> create_cube();
 
 /**
  * allows the user to rotate a cube with move strings of their choice
  * @param cube the cube to rotate
  */
-void manually_rotate(std::unique_ptr<Rubiks_Cube> *cube);
+void manually_rotate(std::shared_ptr<Rubiks_Cube>* cube);
 
 /**
  * asks the user what depth to mix a cube to and then mixes it to that depth
  * @param cube the cube to rotate
  */
-void randomly_rotate(std::unique_ptr<Rubiks_Cube> *cube);
+void randomly_rotate(std::shared_ptr<Rubiks_Cube>* cube);
 
 /**
  * prints the cube
  * @param cube the cube to print
  */
-void view_cube(std::unique_ptr<Rubiks_Cube> *cube);
+void view_cube(std::shared_ptr<Rubiks_Cube> cube);
 
 /**
  * find a path and print it out
  * @param cube the cube to solve
  */
-void solve_cube(std::unique_ptr<Rubiks_Cube> *cube);
+void solve_cube(std::shared_ptr<Rubiks_Cube>* cube);
 
 #endif

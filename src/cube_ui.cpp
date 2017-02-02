@@ -4,7 +4,7 @@
 using namespace std;
 
 void cube_ui_main() {
-    unique_ptr<Rubiks_Cube> cube = create_cube();
+    shared_ptr<Rubiks_Cube> cube = create_cube();
     int input = 1;
     while (input != 0) {
         cout << "What would you like to do: \n"
@@ -13,6 +13,7 @@ void cube_ui_main() {
              << "[2] randomly rotate\n"
              << "[3] view cube\n"
              << "[4] solve cube\n"
+             << "[5] reset cube\n"
              << endl;
         cin >> input;
         switch (input) {
@@ -25,7 +26,7 @@ void cube_ui_main() {
                 randomly_rotate(&cube);
                 break;
             case 3:
-                view_cube(&cube);
+                view_cube(cube);
                 break;
             case 4:
                 solve_cube(&cube);
@@ -37,18 +38,24 @@ void cube_ui_main() {
     }
 }
 
-unique_ptr<Rubiks_Cube> create_cube() {
+shared_ptr<Rubiks_Cube> create_cube() {
     int n;
     cout << "how big of a cube: ";
     cin >> n;
-    return unique_ptr<Rubiks_Cube>(new Rubiks_Cube(n));
+    return shared_ptr<Rubiks_Cube>(new Rubiks_Cube(n));
 }
 
-void manually_rotate(unique_ptr<Rubiks_Cube> *cube) {
-    cout << "not implemented yet" << endl;
+void manually_rotate(shared_ptr<Rubiks_Cube> *cube) {
+    string move;
+    cout << "enter a move [XYZ][slice#][CW|CCW]: ";
+    cin >> move;
+    Rubiks_Cube* newCube = (*cube)->do_move(move);
+    if (!newCube) {
+        cout << move << " is not a valid move, a valid move looks like [XYZ][slice#][CW|CCW] eg. X0CW" << endl;
+    }
 }
 
-void randomly_rotate(unique_ptr<Rubiks_Cube> *cube) {
+void randomly_rotate(shared_ptr<Rubiks_Cube> *cube) {
     int depth;
     cout << "What depth would you like to permute the cube to: ";
     cin >> depth;
@@ -64,11 +71,11 @@ void randomly_rotate(unique_ptr<Rubiks_Cube> *cube) {
     }
 }
 
-void view_cube(unique_ptr<Rubiks_Cube> *cube) {
-    cout << (*cube)->pretty_print_state() << endl;
+void view_cube(shared_ptr<Rubiks_Cube> cube) {
+    cout << cube->pretty_print_state() << endl;
 }
 
-void solve_cube(unique_ptr<Rubiks_Cube> *cube) {
+void solve_cube(shared_ptr<Rubiks_Cube>* cube) {
     cout << "Search type: \n"
          << "[0] BFS\n"
          << "[1] A*\n"
@@ -90,8 +97,9 @@ void solve_cube(unique_ptr<Rubiks_Cube> *cube) {
             return;
     }
 
-    Rubiks_Cube goal = Rubiks_Cube((*cube)->size());
-    shared_ptr<Search_Node> solved = search(type, (*cube).get(), &goal);
+    shared_ptr<Search_Node> solved = search(type, *cube, shared_ptr<Rubiks_Cube>(new Rubiks_Cube((*cube)->size())));
+
+
     list<string> moves = get_move_list(solved.get());
 
     cout << "The cube can be solved with the following moves: " << endl;

@@ -20,7 +20,7 @@ enum Search_Type {
  * @param goal a Searchable representing the goal state
  * @return a SearchNode containing the goal on success, nullptr otherwise
  */
-std::shared_ptr<Search_Node> search(Search_Type type, Searchable* start, Searchable* goal);
+std::shared_ptr<Search_Node> search(Search_Type type, std::shared_ptr<Searchable> start, std::shared_ptr<Searchable> goal);
 
 /**
  * returns a list of the moves used to get to node from whatever start state the search resulting in node used

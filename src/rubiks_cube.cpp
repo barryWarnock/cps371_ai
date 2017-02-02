@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <vector>
 #include <functional>
+#include <regex>
 #include "../include/rubiks_cube.h"
 
 #ifndef INTELLIJ
@@ -411,6 +412,62 @@ Rubiks_Cube* Rubiks_Cube::do_move(Cube_Axis axis, int slice, Cube_Direction dire
     }
 
     return newCube;
+}
+Rubiks_Cube* Rubiks_Cube::do_move(string move) { //returns nullptr on an invalid move string
+    regex axisRegex ("^[X-Z](?=\\d)");
+    regex sliceRegex ("\\d+(?=[CW]+$)");
+    regex directionRegex ("(?:CCW|CW)$");
+
+    smatch axisMatch;
+    regex_search(move, axisMatch, axisRegex);
+    smatch directionMatch;
+    regex_search(move, axisMatch, directionRegex);
+    smatch sliceMatch;
+    regex_search(move, axisMatch, sliceRegex);
+
+    if (axisMatch.begin() == axisMatch.end()) {
+        printf("no axis");
+        return nullptr;
+    }
+    if (sliceMatch.begin() == sliceMatch.end()) {
+        printf("no slice");
+        return nullptr;
+    }
+    if (directionMatch.begin() == directionMatch.end()) {
+        printf("no direction");
+        return nullptr;
+    }
+
+
+
+    string directionString = *directionMatch.begin();
+    string axisString = *axisMatch.begin();
+    string sliceString = *sliceMatch.begin();
+    Cube_Axis axis;
+    int slice;
+    Cube_Direction direction;
+
+    if (axisString == "X") {
+        axis = X;
+    } else if (axisString == "Y") {
+        axis = Y;
+    } else if (axisString == "Z") {
+        axis = Z;
+    }
+
+    slice = stoi(sliceString);
+    if (slice < 0 or slice > this->n) {
+        printf("slice out of range");
+        return nullptr;
+    }
+
+    if (directionString == "CW") {
+        direction = CLOCKWISE;
+    } else if (directionString == "CCW") {
+        direction = COUNTER_CLOCKWISE;
+    }
+
+    do_move(axis, slice, direction);
 }
 
 //direction is the direction the slice is moving, not relative to the face itself

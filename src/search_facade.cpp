@@ -1,7 +1,7 @@
 #include "../include/search_facade.h"
 using namespace std;
 
-shared_ptr<Search_Node> search(Search_Type type, Searchable* start, Searchable* goal) {
+shared_ptr<Search_Node> search(Search_Type type, shared_ptr<Searchable> start, shared_ptr<Searchable> goal) {
     unique_ptr<Search> searchAlgorithm = nullptr;
     switch (type) {
         case BFS:
