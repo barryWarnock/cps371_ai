@@ -8,6 +8,23 @@
 
 using namespace std;
 
+bool has_been_seen(list<shared_ptr<Search_Node>>* openList, vector<shared_ptr<Search_Node>>* closedList, Search_Node* element) {
+    auto search_list_func = [element](shared_ptr<Search_Node> other){
+        return element->self->equal_to(other->self.get());
+    };
+    for (shared_ptr<Search_Node> seen : *openList) {
+        if (seen->self->equal_to(element->self.get())) {
+            return true;
+        }
+    }
+    for (shared_ptr<Search_Node> seen : *closedList) {
+        if (seen->self->equal_to(element->self.get())) {
+            return true;
+        }
+    }
+    return false;
+}
+
 shared_ptr<Search_Node> Breadth_First_Search::find_path(shared_ptr<Searchable> start, shared_ptr<Searchable> goal) {
     std::list<shared_ptr<Search_Node>> openList = list<shared_ptr<Search_Node>>();//without the std:: my ide was highlighting the line as an error
     vector<shared_ptr<Search_Node>> closedList = vector<shared_ptr<Search_Node>>();
@@ -24,20 +41,17 @@ shared_ptr<Search_Node> Breadth_First_Search::find_path(shared_ptr<Searchable> s
     shared_ptr<Search_Node> currentNode = nullptr;
     shared_ptr<Search_Node> finalNode = nullptr;
 
-    while (!found && !openList.empty()) { //if the list is empty that means we have exhausted every possible path which means the given goal is not reachable
+    while (!openList.empty()) {
         currentNode = openList.front();
         openList.pop_front();
         if (currentNode->self->equal_to(goal.get())) {
-            found = true;
             finalNode = currentNode;
+            break;
         } else {
-           vector<Search_Node*> children = currentNode->self->generate_children();
+            vector<Search_Node*> children = currentNode->self->generate_children();
             for (Search_Node* currentChild : children) {
-                auto search_list_func = [currentChild](shared_ptr<Search_Node> other){
-                    return currentChild->self->equal_to(other->self.get());};
-                if (find_if(openList.begin(), openList.end(), search_list_func) != openList.end()
-                    or
-                    find_if(closedList.begin(), closedList.end(), search_list_func) != closedList.end()) {
+
+                if (has_been_seen(&openList, &closedList, currentChild)) {
                     delete currentChild;
                     continue;
                 }

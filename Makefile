@@ -23,5 +23,5 @@ build/ui.o: src/ui.cpp include/ui.h
 build/cube_ui.o: src/cube_ui.cpp include/cube_ui.h
 	g++ -c $(FLAGS) src/cube_ui.cpp -o build/cube_ui.o
 
-tests:
-	g++ $(FLAGS) test/cube_tests.cpp src/rubiks_cube.cpp -o test/run_tests
+tests: build/rubiks_cube.o
+	g++ $(FLAGS) test/cube_tests.cpp build/rubiks_cube.o -o test/run_tests

@@ -178,7 +178,18 @@ string Rubiks_Cube::get_state() {
 }
 
 int Rubiks_Cube::run_heuristic() {
-    return 0;
+    vector<char> correctFaceValue = {'w','y','b','g','o','r'};
+    int offset = 0;
+
+    for (int i = 0; i < cubeString.length(); i++) {
+        int face = i/(n*n);
+        if (cubeString[i] != correctFaceValue[face]) {
+            offset++;
+        }
+    }
+
+    //divide by n*n to ensure admissibility
+    return offset/(n*n);
 }
 
 int Rubiks_Cube::index_from_fxy(int face, int x, int y) {
@@ -426,15 +437,12 @@ Rubiks_Cube* Rubiks_Cube::do_move(string move) { //returns nullptr on an invalid
     regex_search(move, sliceMatch, sliceRegex);
 
     if (axisMatch.empty()) {
-        printf("no axis");
         return nullptr;
     }
     if (sliceMatch.empty()) {
-        printf("no slice");
         return nullptr;
     }
     if (directionMatch.empty()) {
-        printf("no direction");
         return nullptr;
     }
 
@@ -455,7 +463,6 @@ Rubiks_Cube* Rubiks_Cube::do_move(string move) { //returns nullptr on an invalid
 
     slice = stoi(sliceString);
     if (slice < 0 or slice > this->n) {
-        printf("slice out of range");
         return nullptr;
     }
 
