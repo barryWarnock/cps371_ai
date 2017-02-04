@@ -1,5 +1,58 @@
 \documentclass{article}
 
 \begin{document}
+\title{Phase 1}
+\author{Barry Warnock \\
+  CPSC 371 \\}
+\maketitle{}
+\section{The Cube}
+A Rubiks Cube is a square with 6 faces each with n x n sections. A section can have one of six colours and each face begins in a different
+uniform colour. A face is broken up into n slices on both the X and Y axis. The each one of these slices can be rotated clockwise or counter-clockwise
+affecting the sections on both that face and other faces depending on the axis of rotation.
+\subsection{Encoding}
+I numbered the sections of each face with x,y coordinates starting on the 'upper left' which is defined in such a way so that for each face rotating
+to a face with the same parity will not require any extra math to be done to the indices (with the exception to rotations on the Z axis)
 
+The actual structure of the cube in code is a 1d array where each section is indexed by the formula $(n*n*face)+(y*n)+x$
+\subsection{Rotations}
+Rotations are done by iterating through all of the faces affected by the rotation and for each face setting (to\_face, to\_x(from\_x, from\_y),
+to\_y(from\_x, from\_y)) to the value of (from\_face, from\_x, from\_y). where from\_face = the face the sections are coming from, to\_face = the face
+the sections are going to, from\_x = the x value on from\_face, from\_y = the y value on from\_face, to\_x and to\_y are lambda functions dependent on
+from\_x and from\_y that are set depending on the rotation axis and the equivalent parities of from\_face and to\_face.
+
+\subsubsection{Face Rotations}
+When a face needs to be rotated (face, to\_x(from\_y), to\_y(from\_x)) is set to (face, from\_x, from\_y) where to\_x and to\_y are set based on the
+direction of rotation.
+
+\section{Classes / Data Structures / Algorithms}
+\subsection{Searchable}
+\begin{itemize}
+\item generate a list of Searchable objects that can be reached from the current state
+\item return its state as a string
+\item return a heuristic value representing how many steps from solved it thinks it is
+\item compare itself to other Searchables of the same sub-type
+\item return a string representing itself in a human readable format
+\end{itemize}
+\subsubsection{Cube}
+described in section 1.
+
+\subsection{Search\_Node}
+A Search\_Node is a struct with the following data fields:
+\begin{itemize}
+\item a pointer to the Search\_Node representing the Searchable it came from
+\item a pointer to the Searchable it represents
+\item a string representing the move that was taken to get to it from the parent
+\item the depth of this Search\_Node from the start state
+\item a guess about how many steps it is from solved
+\end{itemize}
+
+\subsection{Search}
+Search takes two Searchable objects a start and a goal and returns the Search\_Node representing solved state. This can be used to get the full
+path from start to finish.
+\subsubsection{Breadth First Search}
+BFS works by checking every possible child state of each state then doing the same to each of those children and so on until a solved state is
+reached.
+\subsubsection{A* Search}
+A* works like BFS but instead of ordering the children to check next by the distance from start they are ordered by a guess about how close
+they are to solved.
 \end{document}

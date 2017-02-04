@@ -139,13 +139,6 @@ state: a string defining the current state, for example a 2x2 solved cube might 
 (binary encode both of those as small as possible)
 * requirements 
 https://learn.unbc.ca/bbcswebdav/pid-326781-dt-content-rid-1413526_1/courses/CPSC371.201701.10178/CPSC371%20-%20Project%20-%20Phase%201.pdf
-** TODO experiments 
-*** TODO exp 1
-for i = 1 .. 8:
-  for j = 1 .. 5:
-    create a 3x3x3 cube
-    use A* to solve
-    record the path to a file
 ** TODO documentation
 - detailed analysis of how the cube works
 - explanation of how the cube is encoded
