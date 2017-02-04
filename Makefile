@@ -2,8 +2,8 @@ FLAGS = -g -O3
 
 all: Rubiks
 
-Rubiks: build/main.o build/rubiks_cube.o  build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/record_search_results.o
-	g++ $(FLAGS) build/main.o build/rubiks_cube.o build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o -o bin/Rubiks build/record_search_results.o
+Rubiks: build/main.o build/rubiks_cube.o  build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/record_search_results.o build/cube_experiments.o
+	g++ $(FLAGS) build/main.o build/rubiks_cube.o build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/cube_experiments.o build/record_search_results.o -o bin/Rubiks 
 
 build/main.o: src/main.cpp
 	g++ $(FLAGS) -c src/main.cpp -o build/main.o
@@ -28,6 +28,9 @@ build/cube_ui.o: src/cube_ui.cpp include/cube_ui.h
 
 build/record_search_results.o: src/record_search_results.cpp include/record_search_results.h
 	g++ -c $(FLAGS) src/record_search_results.cpp -o build/record_search_results.o
+
+build/cube_experiments.o: src/cube_experiments.cpp include/cube_experiments.h
+	g++ -c $(FLAGS) src/cube_experiments.cpp -o build/cube_experiments.o
 
 
 tests: build/rubiks_cube.o build/a_star_search.o

@@ -1,4 +1,8 @@
-#ifndef CPSC371_AI_CUBE_EXPERIMENTS_H
-#define CPSC371_AI_CUBE_EXPERIMENTS_H
+#ifndef CUBE_EXPERIMENTS_H
+#define CUBE_EXPERIMENTS_H
 
-#endif //CPSC371_AI_CUBE_EXPERIMENTS_H
+#include <string>
+
+void cube_experiment_1(std::string filename);
+
+#endif

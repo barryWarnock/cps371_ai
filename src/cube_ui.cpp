@@ -2,7 +2,15 @@
 #include "../include/cube_ui.h"
 #include "../include/search_facade.h"
 #include "../include/record_search_results.h"
+#include "../include/cube_experiments.h"
 using namespace std;
+
+shared_ptr<Rubiks_Cube> create_cube();
+void manually_rotate(shared_ptr<Rubiks_Cube>* cube);
+void randomly_rotate(shared_ptr<Rubiks_Cube>* cube);
+void view_cube(shared_ptr<Rubiks_Cube> cube);
+void solve_cube(shared_ptr<Rubiks_Cube>* cube);
+void experiments();
 
 void cube_ui_main() {
     shared_ptr<Rubiks_Cube> cube = create_cube();
@@ -14,6 +22,7 @@ void cube_ui_main() {
              << "[2] randomly rotate\n"
              << "[3] view cube\n"
              << "[4] solve cube\n"
+             << "[5] experiments\n"
              << endl;
         cin >> input;
         switch (input) {
@@ -30,6 +39,9 @@ void cube_ui_main() {
                 break;
             case 4:
                 solve_cube(&cube);
+                break;
+            case 5:
+                experiments();
                 break;
             default:
                 cout << "not a valid option" << endl;
@@ -121,5 +133,29 @@ void solve_cube(shared_ptr<Rubiks_Cube>* cube) {
         if (!success) {
             cout << "failed to write file" << endl;
         }
+    }
+}
+
+void experiments() {
+    cout << "enter the name of the file to save the results in: ";
+    string filename;
+    cin >> filename;
+
+    cout << "Which experiment\n"
+         << "[0] exit\n"
+         << "[1] experiment 1 (solve at various depths)\n"
+         << endl;
+
+    int input;
+    cin >> input;
+    switch (input) {
+        case 0:
+            break;
+        case 1:
+            cube_experiment_1(filename);
+            break;
+        default:
+            cout << "Not an experiment" << endl;
+            break;
     }
 }

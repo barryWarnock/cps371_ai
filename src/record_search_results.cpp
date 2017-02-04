@@ -4,9 +4,9 @@
 
 using namespace std;
 
-bool record_search_results(Search_Node* solved, string filename) {
+bool record_search_results(Search_Node* solved, string filename, bool append) {
     ofstream file;
-    file.open(filename, ios::out);
+    file.open(filename, ios::out | (append ? ios::app : ios::out));
     if (!file.is_open()) {
         return false;
     }

@@ -4,6 +4,6 @@
 #include "searchable.h"
 #include <string>
 
-bool record_search_results(Search_Node* solved, std::string filename);
+bool record_search_results(Search_Node* solved, std::string filename, bool append = false);
 
 #endif
