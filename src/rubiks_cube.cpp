@@ -165,6 +165,7 @@ std::vector<Search_Node*> Rubiks_Cube::generate_children() {
                 }
 
                 node->move = move;
+                node->heuristic_value = node->self->run_heuristic();
 
                 children.push_back(node);
             }

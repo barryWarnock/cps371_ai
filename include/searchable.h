@@ -32,6 +32,7 @@ struct Search_Node {
     std::shared_ptr<Searchable> self;
     std::shared_ptr<Search_Node> parent;
     int depth;
+    int heuristic_value;
     std::string move;
 };
 

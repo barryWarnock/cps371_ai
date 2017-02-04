@@ -1,10 +1,10 @@
-#ifndef BREADTH_FIRST_SEARCH_H
-#define BREADTH_FIRST_SEARCH_H
+#ifndef STAR_SEARCH_H
+#define STAR_SEARCH_H
 
-#include <memory>
 #include "search.h"
+#include "searchable.h"
 
-class Breadth_First_Search : public Search {
+class A_Star_Search : public Search {
 public:
     virtual std::shared_ptr<Search_Node> find_path(std::shared_ptr<Searchable> start, std::shared_ptr<Searchable> goal);
 };

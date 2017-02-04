@@ -23,6 +23,15 @@ enum Search_Type {
 std::shared_ptr<Search_Node> search(Search_Type type, std::shared_ptr<Searchable> start, std::shared_ptr<Searchable> goal);
 
 /**
+ * preforms the selected search on a list of searchables
+ * @param type the type of search to run
+ * @param starts the start states to search
+ * @param goal a Searchable representing the goal state
+ * @return a vector of SearchNodes containing the goal reached by each element of starts
+ */
+std::vector<std::shared_ptr<Search_Node>> search(Search_Type type, std::vector<std::shared_ptr<Searchable>> starts, std::shared_ptr<Searchable> goal);
+
+/**
  * returns a list of the moves used to get to node from whatever start state the search resulting in node used
  * @param node the node to get the moves for
  * @return a vector of moves represented as strings

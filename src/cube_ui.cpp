@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include "../include/cube_ui.h"
 #include "../include/search_facade.h"
+#include "../include/record_search_results.h"
 using namespace std;
 
 void cube_ui_main() {
@@ -13,7 +14,6 @@ void cube_ui_main() {
              << "[2] randomly rotate\n"
              << "[3] view cube\n"
              << "[4] solve cube\n"
-             << "[5] reset cube\n"
              << endl;
         cin >> input;
         switch (input) {
@@ -66,8 +66,8 @@ void randomly_rotate(shared_ptr<Rubiks_Cube> *cube) {
     Cube_Direction direction;
     for (int i = 0; i < depth; i++) {
         slice = rand() % (*cube)->size();
-        direction = (Cube_Direction)(rand() % 1);
-        axis = (Cube_Axis)(rand() % 2);
+        direction = (Cube_Direction)(rand() % 2);
+        axis = (Cube_Axis)(rand() % 3);
         (*cube).reset((*cube)->do_move(axis, slice, direction));
     }
 }
@@ -109,4 +109,17 @@ void solve_cube(shared_ptr<Rubiks_Cube>* cube) {
     }
 
     *cube = dynamic_pointer_cast<Rubiks_Cube>(solved->self);
+
+    cout << "Would you like to save the results to a file [y/n]: ";
+    char save;
+    cin >> save;
+    if (save == 'y') {
+        cout << "please enter a filename: ";
+        string filename;
+        cin >> filename;
+        bool success = record_search_results(solved.get(), filename);
+        if (!success) {
+            cout << "failed to write file" << endl;
+        }
+    }
 }

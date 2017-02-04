@@ -1,4 +1,5 @@
 #include "../include/rubiks_cube.h"
+#include "../include/a_star_search.h"
 #include <string>
 #include <memory>
 #include <iostream>
@@ -122,10 +123,39 @@ int rotate_2x2_tests() {
     return failed;
 }
 
+bool test_sort(shared_ptr<Rubiks_Cube> cube, shared_ptr<Rubiks_Cube> goal, string expected) {
+    A_Star_Search search = A_Star_Search();
+    shared_ptr<Search_Node> solved = search.find_path(cube, goal);
+    bool correct = solved->self->get_state() == expected;
+    if (!correct) {
+        cout << "failed to sort: " << cube->get_state() << endl;
+    }
+    return correct;
+}
+
+int sort_3x3_depth_3() {
+    shared_ptr<Rubiks_Cube> cube = make_shared<Rubiks_Cube>(Rubiks_Cube(3));
+    cube.reset(cube->do_move("X1CW"));
+    cube.reset(cube->do_move("X1CW"));
+    cube.reset(cube->do_move("Z2CW"));
+    return !test_sort(cube, make_shared<Rubiks_Cube>(Rubiks_Cube(3)), "wwwwwwwwwyyyyyyyyybbbbbbbbbgggggggggooooooooorrrrrrrrr");
+}
+
+int sort_2x2_depth_3() {
+    shared_ptr<Rubiks_Cube> cube = make_shared<Rubiks_Cube>(Rubiks_Cube(2));
+    cube.reset(cube->do_move("X1CW"));
+    cube.reset(cube->do_move("X1CW"));
+    cube.reset(cube->do_move("Z0CW"));
+    return !test_sort(cube, make_shared<Rubiks_Cube>(Rubiks_Cube(2)), "wwwwyyyybbbbggggoooorrrr");
+}
+
 int main() {
     int failed = 0;
     failed += rotate_3x3_tests();
     failed += rotate_2x2_tests();
+    failed += sort_3x3_depth_3();
+    failed += sort_2x2_depth_3();
+
     if (failed) cout << "Failed " << failed << " tests" << endl;
     else cout << "All tests passed" << endl;
 }
