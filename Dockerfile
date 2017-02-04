@@ -3,4 +3,4 @@ COPY . /usr/src/cube
 WORKDIR /usr/src/cube
 RUN make
 RUN make tests
-CMD ["/usr/src/cube/test/run_tests"]
+CMD ["sh", "-c", "test/run_tests;", "bin/Rubiks"]
