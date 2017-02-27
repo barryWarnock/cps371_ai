@@ -153,7 +153,16 @@ void experiments() {
             break;
         case 1:
             cube_experiment_1(filename);
-            break;
+            break;/**
+ * a struct that will contain the data a search will need to store in order to be able to recreate the taken path
+ */
+struct Search_Node {
+    std::shared_ptr<Searchable> self;
+    std::shared_ptr<Search_Node> parent;
+    int depth;
+    int heuristic_value;
+    std::string move;
+};
         default:
             cout << "Not an experiment" << endl;
             break;

@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <iostream>
+#include "tests.h"
 using namespace std;
 
 bool test_rotation(string move, string expected, int n) {
@@ -16,6 +17,7 @@ bool test_rotation(string move, string expected, int n) {
     }
 
     if (cube->get_state() == expected) {
+        cout << "Rotation: " << move << ", successful" << endl;
         return true;
     }
 
@@ -40,6 +42,7 @@ bool test_rotation(vector<string> moves, string expected, int n) {
     }
 
     if (cube->get_state() == expected) {
+        cout << "Rotation: " << moveString << ", successful" << endl;
         return true;
     }
 
@@ -149,13 +152,16 @@ int sort_2x2_depth_3() {
     return !test_sort(cube, make_shared<Rubiks_Cube>(Rubiks_Cube(2)), "wwwwyyyybbbbggggoooorrrr");
 }
 
-int main() {
+int cube_tests() {
+    cout << "Beginning cube tests:" << endl;
+
     int failed = 0;
     failed += rotate_3x3_tests();
     failed += rotate_2x2_tests();
     failed += sort_3x3_depth_3();
     failed += sort_2x2_depth_3();
 
-    if (failed) cout << "Failed " << failed << " tests" << endl;
-    else cout << "All tests passed" << endl;
+    cout << "cube tests complete" << endl << endl;
+
+    return failed;
 }
