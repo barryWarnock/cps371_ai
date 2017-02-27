@@ -38,8 +38,7 @@ bool record_search_results(Search_Node* solved, string filename, bool append) {
     }
 
     for (string line : lines) {
-        file << line;
-        file << '\n';
+        file << line << '\n';
     }
 
     file.close();

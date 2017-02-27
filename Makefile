@@ -2,7 +2,7 @@ FLAGS = -O3
 CPP = g++ -c $(FLAGS)  $< -o $@
 LINK = g++ $(FLAGS) $^ -o $@
 
-bin/ai: build/main.o build/rubiks_cube.o  build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/record_search_results.o build/cube_experiments.o build/sbp_impl.o build/neural_net.o
+bin/ai: build/main.o build/rubiks_cube.o  build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/record_search_results.o build/cube_experiments.o build/sbp_impl.o build/neural_net.o build/neural_net_ui.o
 	$(LINK)
 
 build/main.o: src/main.cpp
@@ -24,6 +24,9 @@ build/ui.o: src/ui.cpp include/ui.h
 	$(CPP)
 
 build/cube_ui.o: src/cube_ui.cpp include/cube_ui.h
+	$(CPP)
+
+build/neural_net_ui.o: src/neural_net_ui.cpp include/neural_net_ui.h
 	$(CPP)
 
 build/record_search_results.o: src/record_search_results.cpp include/record_search_results.h

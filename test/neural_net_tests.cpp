@@ -16,16 +16,6 @@ bool test_create_3_4_2_nn() {
         return false;
     } else {
         cout << "Created a neural net with sizes {3,4,2}" << endl;
-        cout << "It has the initial weights:" << endl;
-        for (auto layer : nn.get_weights()) {
-            cout << "  layer:" << endl;
-            for (auto nodes : layer) {
-                cout << "    node:" << endl;
-                for (double from : nodes) {
-                    cout << "      " << from << endl;
-                }
-            }
-        }
         return true;
     }
 }

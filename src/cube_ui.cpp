@@ -14,8 +14,8 @@ void experiments();
 
 void cube_ui_main() {
     shared_ptr<Rubiks_Cube> cube = create_cube();
-    int input = 1;
-    while (input != 0) {
+    int input;
+    do {
         cout << "What would you like to do: \n"
              << "[0] exit\n"
              << "[1] manually rotate\n"
@@ -27,7 +27,7 @@ void cube_ui_main() {
         cin >> input;
         switch (input) {
             case 0:
-                return;
+                break;
             case 1:
                 manually_rotate(&cube);
                 break;
@@ -47,7 +47,7 @@ void cube_ui_main() {
                 cout << "not a valid option" << endl;
                 break;
         }
-    }
+    } while (input);
 }
 
 shared_ptr<Rubiks_Cube> create_cube() {
@@ -153,16 +153,7 @@ void experiments() {
             break;
         case 1:
             cube_experiment_1(filename);
-            break;/**
- * a struct that will contain the data a search will need to store in order to be able to recreate the taken path
- */
-struct Search_Node {
-    std::shared_ptr<Searchable> self;
-    std::shared_ptr<Search_Node> parent;
-    int depth;
-    int heuristic_value;
-    std::string move;
-};
+            break;
         default:
             cout << "Not an experiment" << endl;
             break;
