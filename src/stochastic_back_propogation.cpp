@@ -34,7 +34,7 @@ void neural_net_sbp(vector<pair<vector<double>, vector<double>>> trainingTuples,
 
             vector<double> actualOut = nn->feed_forward(in);
 
-            
+
         }
         if (calculate_neural_net_error(bestNN.get(), trainingTuples) > calculate_neural_net_error(currentNN.get(), trainingTuples)) {
             bestNN.reset(currentNN.release());
@@ -47,9 +47,9 @@ void neural_net_sbp(vector<pair<vector<double>, vector<double>>> trainingTuples,
 double calculate_error(vector<double> expected, vector<double> actual) {
     double error = 0;
     for (int i = 0; i < expected.size(); i++) {
-        error += pow(expected[i]-actual[i], 2);
+        error += pow(expected[i]-actual[i], 2)/2;
     }
-    return sqrt(error);
+    return error;
 }
 
 double calculate_neural_net_error(SBP_Impl* nn, vector<pair<vector<double>, vector<double>>> trainingTuples) {
@@ -57,5 +57,5 @@ double calculate_neural_net_error(SBP_Impl* nn, vector<pair<vector<double>, vect
     for (auto tuple : trainingTuples) {
         totalError += calculate_error(nn->feed_forward(tuple.first), tuple.second);
     }
-    return totalError;
+    return totalError/trainingTuples.size();
 }
