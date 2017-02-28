@@ -2,7 +2,7 @@ FLAGS = -O3
 CPP = g++ -c $(FLAGS)  $< -o $@
 LINK = g++ $(FLAGS) $^ -o $@
 
-bin/ai: build/main.o build/rubiks_cube.o  build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/record_search_results.o build/cube_experiments.o build/sbp_impl.o build/neural_net.o build/neural_net_ui.o
+bin/ai: build/main.o build/rubiks_cube.o  build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/record_search_results.o build/cube_experiments.o build/sbp_impl.o build/neural_net.o build/neural_net_ui.o build/stochastic_back_propogation.o
 	$(LINK)
 
 build/main.o: src/main.cpp
@@ -39,6 +39,9 @@ build/sbp_impl.o: src/sbp_impl.cpp include/sbp_impl.h
 	$(CPP)
 
 build/neural_net.o: src/neural_net.cpp include/neural_net.h build/sbp_impl.o
+	$(CPP)
+
+build/stochastic_back_propogation.o: src/stochastic_back_propogation.cpp include/stochastic_back_propogation.h
 	$(CPP)
 
 tests: test/run_tests

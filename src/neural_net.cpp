@@ -69,3 +69,9 @@ std::vector<double> Neural_Net::feed_forward(std::vector<double> input) {
 std::vector<std::vector<double>> Neural_Net::get_previous_nets() {
     return nets;
 }
+
+SBP_Impl *Neural_Net::clone() {
+    SBP_Impl* cloned = new Neural_Net(this->layerSizes);
+    cloned->set_weights(this->weights);
+    return cloned;
+}

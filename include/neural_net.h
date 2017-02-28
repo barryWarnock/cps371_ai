@@ -11,6 +11,7 @@ public:
     void init(std::vector<int> layerSizes);
     std::vector<double> feed_forward(std::vector<double> input);
     std::vector<std::vector<double>> get_previous_nets();
+    SBP_Impl *clone();
 };
 
 

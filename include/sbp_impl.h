@@ -12,6 +12,7 @@ public:
     virtual void init(std::vector<int> layerSizes) = 0;
     virtual std::vector<double> feed_forward(std::vector<double> input) = 0;
     virtual std::vector<std::vector<double>> get_previous_nets() = 0;
+    virtual SBP_Impl *clone() = 0;
 
     //getters and setters
     std::vector<int> get_layer_sizes();

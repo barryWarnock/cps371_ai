@@ -1,9 +1,11 @@
 #include "../include/neural_net_ui.h"
 #include "../include/sbp_impl.h"
 #include "../include/neural_net.h"
+#include "../include/stochastic_back_propogation.h"
 #include <iostream>
 #include <memory>
 #include <fstream>
+#include <cstring>
 
 using namespace std;
 
@@ -12,7 +14,7 @@ void view_weights(SBP_Impl* nn);
 void feed_forward(SBP_Impl* nn);
 void train(SBP_Impl* nn);
 void save(SBP_Impl* nn);
-void load(SBP_Impl* nn);
+SBP_Impl* load();
 
 void neural_net_ui_main() {
     unique_ptr<SBP_Impl> nn = create_nn();
@@ -44,7 +46,7 @@ void neural_net_ui_main() {
                 save(nn.get());
                 break;
             case 5:
-                load(nn.get());
+                nn.reset(load());
                 break;
             default:
                 cout << "not a valid option" << endl;
@@ -53,12 +55,25 @@ void neural_net_ui_main() {
 }
 
 unique_ptr<SBP_Impl> create_nn() {
+    cout << "[0] manually specify neural net size\n"
+         << "[1] load neural net from file\n"
+         << endl;
+    int type;
+    cin >> type;
+    if (type) {
+        SBP_Impl *nn = load();
+        if (nn) {
+            return move(unique_ptr<SBP_Impl>(nn));
+        } else {
+            cout << "Failed to load from file, defaulting to manual" << endl;
+        }
+    }
     int layers;
     cout << "How many layers: ";
     cin >> layers;
 
     vector<int> layerSizes(layers);
-    for (int layer =0; layer < layers; layer++) {
+    for (int layer = 0; layer < layers; layer++) {
         cout << "How many nodes in layer " << layer << ": ";
         cin >> layerSizes[layer];
     }
@@ -94,13 +109,48 @@ void feed_forward(SBP_Impl* nn) {
     cout << "result: ";
     for (double output : outputs) {
         cout << output << ", ";
-    } cout << endl;
+    }
+    cout << endl;
 
     cout << endl;
 }
 
 void train(SBP_Impl* nn) {
-    cout << "not yet implemented" << endl;
+    cout << "please enter a filename containing training data: ";
+    string filename;
+    cin >> filename;
+
+    ifstream file;
+    file.open(filename, ios::in);
+    if (!file.is_open()) {
+        cout << "failed to load file, aborting." << endl;
+    } else {
+        vector<pair<vector<double>, vector<double>>> trainingTuples;
+
+        string line, in, out;
+        while (getline(file, line)) {
+            in = strtok((char*)line.c_str(), "|");
+            out = strtok(NULL, "|");
+            vector<double> inVector, outVector;
+
+            char* num;
+            num = strtok((char*)in.c_str(), ",");
+            do {
+                inVector.push_back(atof(num));
+            } while ((num = strtok(NULL, ",")));
+
+            num = strtok((char*)out.c_str(), ",");
+            do {
+                outVector.push_back(atof(num));
+            } while ((num = strtok(NULL, ",")));
+
+            trainingTuples.push_back(make_pair(inVector, outVector));
+        }
+
+        cout << "training, please wait" << endl;
+
+        neural_net_sbp(trainingTuples, nn, trainingTuples.size() * 30, 5);
+    }
     cout << endl;
 }
 
@@ -130,7 +180,58 @@ void save(SBP_Impl* nn) {
     cout << endl;
 }
 
-void load(SBP_Impl* nn) {
-    cout << "not yet implemented" << endl;
-    cout << endl;
+SBP_Impl* load() {
+    cout << "please enter a filename: ";
+    string filename;
+    cin >> filename;
+
+    ifstream file;
+    file.open(filename, ios::in);
+    if (!file.is_open()) {
+        cout << "Failed to open " << filename << endl << endl;
+        return NULL;
+    } else {
+        vector<int> newLayerSizes;
+        vector<vector<vector<double>>> newWeights;
+
+        string line;
+        vector<vector<double>> layer;
+
+        while (getline(file, line)) {
+            if (line == "") {
+                newWeights.push_back(layer);
+
+                layer = vector<vector<double>>();
+            } else {
+                vector<double> node;
+
+                string weightStr;
+                weightStr = strtok((char*)line.c_str(), ",");
+
+                while (true) {
+                    node.push_back(atof(weightStr.c_str()));
+                    char* weightCSTR = strtok(NULL, ",");
+                    if (weightCSTR == NULL) {
+                        break;
+                    }
+                    weightStr = weightCSTR;
+                }
+
+                layer.push_back(node);
+            }
+        }
+
+        for (auto layer : newWeights) {
+            newLayerSizes.push_back(layer[0].size()-1);
+        }
+
+        cout << endl;
+
+        file.close();
+
+        SBP_Impl* nn = new Neural_Net(newLayerSizes);
+        nn->set_weights(newWeights);
+
+        return nn;
+    }
 }
