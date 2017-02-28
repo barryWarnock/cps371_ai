@@ -5,23 +5,13 @@
 #include "../include/stochastic_back_propogation.h"
 
 using namespace std;
-/*
-begin initialize network topology (# hidden units), w, criterion θ, η, m ← 0
-do m ← m + 1
-x m ← randomly chosen pattern
-w ij ← w ij + ηδ j x i ; w jk ← w jk + ηδ k y j
-until ∇J(w) < θ
-return w
-end
- */
+
 double calculate_error(vector<double> expected, vector<double> actual);
 double calculate_neural_net_error(SBP_Impl* nn, vector<pair<vector<double>, vector<double>>> trainingTuples);
 
-void neural_net_sbp(vector<pair<vector<double>, vector<double>>> trainingTuples, SBP_Impl* nn,
+double neural_net_sbp(vector<pair<vector<double>, vector<double>>> trainingTuples, SBP_Impl* nn,
                     int trainingIterations, int epochs) {
     unique_ptr<SBP_Impl> bestNN(nn->clone());
-
-    int len = bestNN->get_layer_sizes().size();
 
     for (int epoch = 0; epoch < epochs; epoch++) {
         unique_ptr<SBP_Impl> currentNN(bestNN->clone());
@@ -34,14 +24,18 @@ void neural_net_sbp(vector<pair<vector<double>, vector<double>>> trainingTuples,
 
             vector<double> actualOut = nn->feed_forward(in);
 
-
         }
+
+        //if I can't get sbp to work by the deadline permuting the weights and choosing the one with the least error is at least something, still trash though
+        currentNN->init(currentNN->get_layer_sizes());
+
         if (calculate_neural_net_error(bestNN.get(), trainingTuples) > calculate_neural_net_error(currentNN.get(), trainingTuples)) {
             bestNN.reset(currentNN.release());
         }
     }
 
     nn->set_weights(bestNN->get_weights());
+    return calculate_neural_net_error(nn, trainingTuples);
 }
 
 double calculate_error(vector<double> expected, vector<double> actual) {

@@ -149,7 +149,9 @@ void train(SBP_Impl* nn) {
 
         cout << "training, please wait" << endl;
 
-        neural_net_sbp(trainingTuples, nn, trainingTuples.size() * 30, 5);
+        double error = neural_net_sbp(trainingTuples, nn, trainingTuples.size() * 30, 5);
+
+        cout << "training resulted in an error of: " << error << endl;
     }
     cout << endl;
 }
@@ -224,6 +226,7 @@ SBP_Impl* load() {
         for (auto layer : newWeights) {
             newLayerSizes.push_back(layer[0].size()-1);
         }
+        newLayerSizes.push_back(newWeights[newWeights.size()-1].size());
 
         cout << endl;
 
