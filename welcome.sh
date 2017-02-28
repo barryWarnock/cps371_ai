@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 read -p "[0]: main program or [1]: tests: " ip
 echo "$ip"
