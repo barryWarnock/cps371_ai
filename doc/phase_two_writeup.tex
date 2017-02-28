@@ -1,0 +1,35 @@
+\documentclass{article}
+
+\begin{document}
+\title{Phase 2}
+\author{Barry Warnock \\
+  CPSC 371 \\}
+\maketitle{}
+\section{Running the program}
+The program is fully dockerized and can be run using the following commands:
+\begin{center}
+  docker pull gespatcho/cpsc371\_ai:latest\\
+  docker run -a stdin -a stdout -i -t gespatcho/cpsc371\_ai
+  
+\end{center}
+\section{Results}
+As of the time of writing this I do not have stochastic back-propagation working so I have nothing to report as the success of training the
+neural net.
+
+If you want to at least load up a NN with the right size for the xor problem you can load the file named xornn.csv
+
+\section{Classes / Data Structures / Algorithms}
+\subsection{SBP\_Impl}
+Provides the stochastic back propagation function an interface with the following functionality:
+\begin{itemize}
+\item get and set the weights on edges
+\item check how many layers there are and how big they are
+\item feed an input vector forward and return the result vector
+\item get the net values resulting from the last feed-forward
+\end{itemize}
+\subsubsection{Neural\_Net}
+Implements SBP\_Impl
+
+\subsection{neural\_net\_sbp}
+Takes a SBP\_Impl object along with a list of input/expected output pairs and trains the net on that data.
+\end{document}

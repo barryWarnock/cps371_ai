@@ -15,6 +15,7 @@ double neural_net_sbp(vector<pair<vector<double>, vector<double>>> trainingTuple
 
     for (int epoch = 0; epoch < epochs; epoch++) {
         unique_ptr<SBP_Impl> currentNN(bestNN->clone());
+        currentNN->init(currentNN->get_layer_sizes());
 
         currentNN->init(nn->get_layer_sizes());
         for (int i = 0; i < trainingIterations; i++) {
@@ -24,10 +25,8 @@ double neural_net_sbp(vector<pair<vector<double>, vector<double>>> trainingTuple
 
             vector<double> actualOut = nn->feed_forward(in);
 
-        }
 
-        //if I can't get sbp to work by the deadline permuting the weights and choosing the one with the least error is at least something, still trash though
-        currentNN->init(currentNN->get_layer_sizes());
+        }
 
         if (calculate_neural_net_error(bestNN.get(), trainingTuples) > calculate_neural_net_error(currentNN.get(), trainingTuples)) {
             bestNN.reset(currentNN.release());

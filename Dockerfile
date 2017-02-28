@@ -3,4 +3,4 @@ COPY . /usr/src/cube
 WORKDIR /usr/src/cube
 RUN make
 RUN make tests
-CMD ["bin/ai"]
+CMD ["./welcome.sh"]
