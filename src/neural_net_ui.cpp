@@ -136,20 +136,34 @@ void train(SBP_Impl* nn) {
             char* num;
             num = strtok((char*)in.c_str(), ",");
             do {
-                inVector.push_back(atof(num));
+                if (num != "") inVector.push_back(atof(num));
             } while ((num = strtok(NULL, ",")));
 
             num = strtok((char*)out.c_str(), ",");
             do {
-                outVector.push_back(atof(num));
+                if (num != "") outVector.push_back(atof(num));
             } while ((num = strtok(NULL, ",")));
 
             trainingTuples.push_back(make_pair(inVector, outVector));
         }
 
+        int iterations, epochs;
+        double learningRate, momentum, weightDecay;
+
+        cout << "epochs: ";
+        cin >> epochs;
+        cout << "epoch iterations: ";
+        cin >> iterations;
+        cout << "learning rate: ";
+        cin >> learningRate;
+        cout << "momentum: ";
+        cin >> momentum;
+        cout << "weight decay: ";
+        cin >> weightDecay;
+
         cout << "training, please wait" << endl;
 
-        double error = neural_net_sbp(trainingTuples, nn, trainingTuples.size() * 30, 5);
+        double error = neural_net_sbp(trainingTuples, nn, iterations, epochs, learningRate, momentum, weightDecay);
 
         cout << "training resulted in an error of: " << error << endl;
     }

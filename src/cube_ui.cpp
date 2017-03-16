@@ -1,8 +1,12 @@
 #include <cstdlib>
+#include <map>
 #include "../include/cube_ui.h"
 #include "../include/search_facade.h"
 #include "../include/record_search_results.h"
 #include "../include/cube_experiments.h"
+#include "../include/a_star_search.h"
+#include "../include/serialize_cube.h"
+
 using namespace std;
 
 shared_ptr<Rubiks_Cube> create_cube();
@@ -10,6 +14,7 @@ void manually_rotate(shared_ptr<Rubiks_Cube>* cube);
 void randomly_rotate(shared_ptr<Rubiks_Cube>* cube);
 void view_cube(shared_ptr<Rubiks_Cube> cube);
 void solve_cube(shared_ptr<Rubiks_Cube>* cube);
+void generate_data();
 void experiments();
 
 void cube_ui_main() {
@@ -22,7 +27,8 @@ void cube_ui_main() {
              << "[2] randomly rotate\n"
              << "[3] view cube\n"
              << "[4] solve cube\n"
-             << "[5] experiments\n"
+             << "[5] generate training data\n"
+             << "[6] experiments\n"
              << endl;
         cin >> input;
         switch (input) {
@@ -41,6 +47,9 @@ void cube_ui_main() {
                 solve_cube(&cube);
                 break;
             case 5:
+                generate_data();
+                break;
+            case 6:
                 experiments();
                 break;
             default:
@@ -134,6 +143,50 @@ void solve_cube(shared_ptr<Rubiks_Cube>* cube) {
             cout << "failed to write file" << endl;
         }
     }
+}
+
+void generate_data() {
+    int depth, numTimes;
+    cout << "permute to what depth: ";
+    cin >> depth;
+    cout << "how many times: ";
+    cin >> numTimes;
+    cout << "save to: ";
+    string filename;
+    cin >> filename;
+
+    map<string, string> stateMoves = map<string, string>();
+
+    A_Star_Search search = A_Star_Search();
+    shared_ptr<Rubiks_Cube> cube;
+    for(int i = 0; i < numTimes; i++) {
+        cube = make_shared<Rubiks_Cube>(Rubiks_Cube(3));
+        Cube_Axis axis;
+        int slice;
+        Cube_Direction direction;
+        for (int k = 0; k < depth; k++) {
+            slice = rand() % cube->size();
+            direction = (Cube_Direction) (rand() % 2);
+            axis = (Cube_Axis) (rand() % 3);
+            cube.reset(cube->do_move(axis, slice, direction));
+        }
+        shared_ptr<Search_Node> solved = search.find_path(cube, make_shared<Rubiks_Cube>(Rubiks_Cube(3)));
+        while (solved) {
+            if (solved->move == "") {
+                solved = solved->parent;
+                continue;
+            }
+
+            string formattedState = stringify_state(solved->self->get_state());
+            string formattedMove = stringify_move(solved->move);
+
+            stateMoves.insert(pair<string,string>(formattedState, formattedMove));
+
+            solved = solved->parent;
+        }
+        cout << "completed permutation " << i << endl;
+    }
+    write_cube(filename, stateMoves);
 }
 
 void experiments() {

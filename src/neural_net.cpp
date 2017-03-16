@@ -35,7 +35,7 @@ void Neural_Net::init(std::vector<int> layerSizes) {
 
 std::vector<double> Neural_Net::feed_forward(std::vector<double> input) {
     if (input.size() != layerSizes[0]) {
-        throw std::domain_error("Bad input, feed forward must take the same number of inputs as input neurons");
+        throw std::domain_error("Bad input, feed forward must take the same number of inputs as input neurons, expected ");
     }
 
     nets = vector<vector<double>>(layerSizes.size()-1);

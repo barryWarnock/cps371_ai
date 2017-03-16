@@ -2,7 +2,6 @@
 #include "../include/record_search_results.h"
 #include "../include/a_star_search.h"
 #include "../include/rubiks_cube.h"
-#include <string>
 
 using namespace std;
 
