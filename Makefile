@@ -1,4 +1,4 @@
-FLAGS = -O3
+FLAGS = -O3 -fopenmp
 CPP = g++ -c $(FLAGS)  $< -o $@
 LINK = g++ $(FLAGS) $^ -o $@
 
