@@ -1,7 +1,6 @@
-#!/bin/sh
-
+#!/usr/bin/env sh
+cd $(dirname $0)
 read -p "[0]: main program or [1]: tests: " ip
-echo "$ip"
 if [ "$ip" -eq "0" ]; then
     bin/ai
 else
