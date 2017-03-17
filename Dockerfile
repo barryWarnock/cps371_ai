@@ -1,4 +1,4 @@
-FROM gcc
+FROM frolvlad/alpine-gcc
 COPY . /usr/src/cube
 WORKDIR /usr/src/cube
 RUN make

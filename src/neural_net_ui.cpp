@@ -6,6 +6,8 @@
 #include <memory>
 #include <fstream>
 #include <cstring>
+#include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -15,6 +17,8 @@ void feed_forward(SBP_Impl* nn);
 void train(SBP_Impl* nn);
 void save(SBP_Impl* nn);
 SBP_Impl* load();
+void experiment();
+void test_csv(SBP_Impl* nn);
 
 void neural_net_ui_main() {
     unique_ptr<SBP_Impl> nn = create_nn();
@@ -27,6 +31,8 @@ void neural_net_ui_main() {
              << "[3] train\n"
              << "[4] save\n"
              << "[5] load\n"
+             << "[6] experiment\n"
+             << "[7] test against training csv\n"
              << endl;
         cin >> input;
 
@@ -47,6 +53,12 @@ void neural_net_ui_main() {
                 break;
             case 5:
                 nn.reset(load());
+                break;
+            case 6:
+                experiment();
+                break;
+            case 7:
+                test_csv(nn.get());
                 break;
             default:
                 cout << "not a valid option" << endl;
@@ -115,38 +127,52 @@ void feed_forward(SBP_Impl* nn) {
     cout << endl;
 }
 
-void train(SBP_Impl* nn) {
-    cout << "please enter a filename containing training data: ";
-    string filename;
-    cin >> filename;
-
+/**
+ * loads training tuples from a file
+ * @param filename
+ * @return a pair of bool and the tuples, if the bool is false the function failed to load from the file
+ */
+pair<bool, vector<pair<vector<double>, vector<double>>>> training_tuples_from_file(string filename) {
     ifstream file;
     file.open(filename, ios::in);
     if (!file.is_open()) {
-        cout << "failed to load file, aborting." << endl;
+        return make_pair(false, vector<pair<vector<double>, vector<double>>>(0));
     } else {
         vector<pair<vector<double>, vector<double>>> trainingTuples;
 
         string line, in, out;
         while (getline(file, line)) {
-            in = strtok((char*)line.c_str(), "|");
+            in = strtok((char *) line.c_str(), "|");
             out = strtok(NULL, "|");
             vector<double> inVector, outVector;
 
-            char* num;
-            num = strtok((char*)in.c_str(), ",");
+            char *num;
+            num = strtok((char *) in.c_str(), ",");
             do {
                 if (num != "") inVector.push_back(atof(num));
             } while ((num = strtok(NULL, ",")));
 
-            num = strtok((char*)out.c_str(), ",");
+            num = strtok((char *) out.c_str(), ",");
             do {
                 if (num != "") outVector.push_back(atof(num));
             } while ((num = strtok(NULL, ",")));
 
             trainingTuples.push_back(make_pair(inVector, outVector));
         }
+        return make_pair(true, trainingTuples);
+    }
+}
 
+void train(SBP_Impl* nn) {
+    cout << "please enter a filename containing training data: ";
+    string filename;
+    cin >> filename;
+
+    auto trainingTuplesPair = training_tuples_from_file(filename);
+    if (!trainingTuplesPair.first) {
+        cout << "failed to load file, aborting." << endl;
+    } else {
+        auto trainingTuples = trainingTuplesPair.second;
         int iterations, epochs;
         double learningRate, momentum, weightDecay;
 
@@ -250,5 +276,111 @@ SBP_Impl* load() {
         nn->set_weights(newWeights);
 
         return nn;
+    }
+}
+
+void experiment() {
+    string filename;
+    cout << "name of file containing training tuples: ";
+    cin >> filename;
+
+    auto trainingTuplesPair = training_tuples_from_file(filename);
+    if (!trainingTuplesPair.first) {
+        cout << "failed to load file, aborting." << endl;
+    } else {
+        auto trainingTuples = trainingTuplesPair.second;
+
+        int inputSize = trainingTuples[0].first.size();
+        int outputSize = trainingTuples[0].second.size();
+
+        vector<pair<double, string>> best;
+
+        for (int H = 5; H <= 30; H += 5) {
+            vector<int> sizes = {inputSize, H, outputSize};
+            for (double l = 0.01; l <= 0.1; l += 0.01) {
+                for (double M = 0; M < 1; M += 0.3) {
+                        for (int numEpochs = 10; numEpochs <= 30; numEpochs += 10) {
+#pragma omp parallel for
+                            for (int i = 100; i <= 400; i += 100) {
+                                Neural_Net nn(sizes);
+                                double error = neural_net_sbp(trainingTuples, &nn, i * trainingTuples.size(), numEpochs,
+                                                              l, M);
+#pragma omp critical
+                                {
+                                    stringstream description;
+
+                                    description << "H: " << H << endl
+                                                << "l: " << l << endl
+                                                << "M: " << M << endl
+                                                << "numEpochs: " << numEpochs << endl
+                                                << "i: " << i << endl;
+
+                                    best.push_back(make_pair(error, description.str()));
+
+                                    cout << error << endl << description.str() << endl << endl;
+                                }
+                            }
+                        }
+                }
+            }
+        }
+
+        sort(best.begin(), best.end(), [](pair<double, string> a, pair<double, string> b) {return a.first > b.first;});
+        cout << "top 5:";
+        for (int i = 0; i < 5; i++) {
+            cout << "   error: " << best[i].first << endl
+                 << best[i].second
+                 << endl << endl;
+        }
+    }
+}
+
+void test_csv(SBP_Impl* nn) {
+    string filename;
+    cout << "name of file containing training tuples: ";
+    cin >> filename;
+
+    auto trainingTuplesPair = training_tuples_from_file(filename);
+    if (!trainingTuplesPair.first) {
+        cout << "failed to load file, aborting." << endl;
+    } else {
+        auto trainingTuples = trainingTuplesPair.second;
+
+        bool stop = false;
+        while (!stop) {
+            unsigned int input;
+            cout << "please choose a tuple index between 0 and " << trainingTuples.size()-1 << ": ";
+            cin >> input;
+            if (input >= trainingTuples.size()) continue;
+
+            auto in = trainingTuples[input].first;
+            auto expectedOut = trainingTuples[input].second;
+            auto actualOut = nn->feed_forward(in);
+
+            cout << "expected [";
+            for (double d : expectedOut) {
+                cout << d << ",";
+            }
+            cout << "]" << endl
+                 << "received [";
+            for (double d : actualOut) {
+                cout << d << ",";
+            }
+            cout << "]" << endl << endl;
+
+            cout << "or after 'stretching' to extremes\n"
+                 << "         [";
+            for (double d : actualOut) {
+                cout << ((d > 0) ? 1 : -1) << ",";
+            }
+            cout << "]" << endl << endl;
+
+            cout << "[0] exit\n"
+                 << "[1] keep testing\n"
+                 << endl;
+            cin >> input;
+
+            stop = !input;
+        }
     }
 }
