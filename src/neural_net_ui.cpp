@@ -325,7 +325,7 @@ void experiment() {
             }
         }
 
-        sort(best.begin(), best.end(), [](pair<double, string> a, pair<double, string> b) {return a.first > b.first;});
+        sort(best.begin(), best.end(), [](pair<double, string> a, pair<double, string> b) {return a.first < b.first;});
         cout << "top 5:";
         for (int i = 0; i < 5; i++) {
             cout << "   error: " << best[i].first << endl
