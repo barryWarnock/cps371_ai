@@ -13,7 +13,7 @@ double tanh_derivative(double value) {
 double calculate_error(vector<double> expected, vector<double> actual);
 double calculate_neural_net_error(SBP_Impl* nn, vector<pair<vector<double>, vector<double>>> trainingTuples);
 
-double neural_net_sbp(vector<pair<vector<double>, vector<double>>> trainingTuples, SBP_Impl* nn,
+double neural_net_sbp(NN_Data_Set trainingTuples, SBP_Impl* nn,
                       int trainingIterations, int epochs, double learningRate, double momentum,
                       double weightDecay) {
     unique_ptr<SBP_Impl> bestNN(nn->clone());

@@ -139,9 +139,40 @@ state: a string defining the current state, for example a 2x2 solved cube might 
 (binary encode both of those as small as possible)
 * requirements 
 https://learn.unbc.ca/bbcswebdav/pid-326781-dt-content-rid-1413526_1/courses/CPSC371.201701.10178/CPSC371%20-%20Project%20-%20Phase%201.pdf
-** TODO documentation
+** DONE documentation
 - detailed analysis of how the cube works
 - explanation of how the cube is encoded
 - explanation of the various classes, data structures and algorithms in the solution
   - an explanation of how these components work together
      
+* GA
+- take a NN output and map it to a rubiks cube move
+- genetic algorithm works on a fitness function
+  - has a mutation chance
+  - has a number of generations
+  - works on genomes
+  - has a crossover chance
+- genomes have genes
+  - a genome is a neural net
+    - has a topology
+  - genes are weights
+
+- algorithm
+  - pop size
+  - generations
+  - elite %
+  - mutation %
+  - crossover %
+- genome
+  - has methods
+    - mutate
+      - returns a mutated version of itself
+    - crossover
+      - takes another genome and returns a new one
+    - get_net
+    - fitness
+  - genes are floats
+- cube_genome
+  - takes a list of start states in its fitness function and its 
+    fitness is its average difference between moves taken and 
+    minimum moves
