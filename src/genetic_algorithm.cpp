@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <list>
 #include <random>
+#include <iomanip>
 #include "../include/genetic_algorithm.h"
 using namespace std;
 
@@ -94,10 +95,7 @@ run_genetic_algorithm(int population, int generations, unsigned int elite, unsig
         //create next generation
         vector<Neural_Net_Genome*> elites = select_elites(orderedPop, numElite, fitness_callback);
         nextPopulation->insert(nextPopulation->end(), elites.begin(), elites.end());
-        for (int i = 0; i < numMutated; i++) {
-            int a = rnd()%elites.size();
-            nextPopulation->push_back(elites.at(a)->mutate());
-        }
+
         for (int i = 0; i < numCrossover; i++) {
             int a = rnd()%elites.size();
             int b = rnd()%elites.size();
@@ -105,6 +103,11 @@ run_genetic_algorithm(int population, int generations, unsigned int elite, unsig
                 b = rnd()%elites.size();
             }
             nextPopulation->push_back(elites.at(a)->crossover(elites.at(b)));
+        }
+
+        for (int i = 0; i < numMutated; i++) {
+            int a = rnd()%elites.size();
+            nextPopulation->push_back(elites.at(a)->mutate());
         }
 
         for (auto genome : orderedPop) {

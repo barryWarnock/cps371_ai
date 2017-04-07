@@ -38,11 +38,6 @@ void Neural_Net_Genome::cleanup() {
 
 Neural_Net_Genome::Neural_Net_Genome(std::vector<int> topology) {
     this->init(topology);
-    random_device rnd;
-    for (double& weight : weights) {
-        int iValue = (rnd()%200)+1;
-        weight = (iValue < 101) ? (-1 * 1.0/iValue) : (1.0/(iValue-100));
-    }
 }
 
 void Neural_Net_Genome::init(std::vector<int> topology) {
@@ -52,6 +47,11 @@ void Neural_Net_Genome::init(std::vector<int> topology) {
         totalWeights += topology.at(i) * (topology.at(i-1)+1);//a weight for each node to each node in the next layer plus bias
     }
     weights = vector<double>(totalWeights);
+    random_device rnd;
+    for (double& weight : weights) {
+        int iValue = (rnd()%200)+1;
+        weight = (iValue < 101) ? (-1 * 1.0/iValue) : (1.0/(iValue-100));
+    }
 }
 
 Neural_Net Neural_Net_Genome::get_as_net() {
