@@ -2,11 +2,12 @@
 #define NEURAL_NET_GENOME_H
 #include <vector>
 #include <queue>
+#include <list>
 #include "neural_net.h"
 
 class Neural_Net_Genome {
 protected:
-    static std::queue<Neural_Net_Genome*> freeNNGs();//used to prevent unnecessary reallocations of memory
+    static std::queue<Neural_Net_Genome*> freeNNGs;//used to prevent unnecessary reallocations of memory
     std::vector<int> topology;
     std::vector<double> weights;//genes
 public:

@@ -2,7 +2,7 @@ FLAGS = -O3 -fopenmp
 CPP = g++ -c $(FLAGS)  $< -o $@
 LINK = g++ $(FLAGS) $^ -o $@
 
-bin/ai: build/main.o build/rubiks_cube.o  build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/record_search_results.o build/cube_experiments.o build/sbp_impl.o build/neural_net.o build/neural_net_ui.o build/stochastic_back_propogation.o build/serialize_cube.o
+bin/ai: build/main.o build/rubiks_cube.o  build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/record_search_results.o build/cube_experiments.o build/sbp_impl.o build/neural_net.o build/neural_net_ui.o build/stochastic_back_propogation.o build/serialize_cube.o build/genetic_algorithm_ui.o build/neural_net_genome.o build/genetic_algorithm.o
 	$(LINK)
 
 build/main.o: src/main.cpp 
@@ -45,6 +45,15 @@ build/neural_net.o: src/neural_net.cpp include/neural_net.h build/sbp_impl.o
 	$(CPP)
 
 build/stochastic_back_propogation.o: src/stochastic_back_propogation.cpp include/stochastic_back_propogation.h
+	$(CPP)
+
+build/genetic_algorithm_ui.o: src/genetic_algorithm_ui.cpp include/genetic_algorithm_ui.h
+	$(CPP)
+
+build/neural_net_genome.o: src/neural_net_genome.cpp include/neural_net_genome.h
+	$(CPP)
+
+build/genetic_algorithm.o: src/genetic_algorithm.cpp include/genetic_algorithm.h
 	$(CPP)
 
 tests: test/run_tests

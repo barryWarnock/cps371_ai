@@ -17,7 +17,13 @@
  * @return a vector of tuples representing the (best, average, worst) fitnesses per generation
  */
 std::vector<std::tuple<double, double, double>> run_genetic_algorithm(int population, int generations,
-                                                                      int elite, int mutation, int crossover,
+                                                                      unsigned int elite, unsigned int mutation, unsigned int crossover,
                                                                       std::function<double(Neural_Net_Genome*)> fitness_callback,
                                                                       std::vector<int> topology);
+
+/**
+ * clears the neural_net_genome pool
+ * this cant happen in run_genetic_algorithm if it is called is parallel with itself
+ */
+void genetic_algorithm_cleanup();
 #endif
