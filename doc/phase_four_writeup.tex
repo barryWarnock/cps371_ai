@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage{graphicx}
+
+\title{Phase 3}
+\author{Barry Warnock \\
+  CPSC 371}
+
+\begin{document}
+\maketitle{}
+\section{Running the program}
+The program is fully dockerized and can be run using the following commands:
+\begin{center}
+  docker pull gespatcho/cpsc371\_ai:phase4\\
+  docker run -a stdin -a stdout -i -t gespatcho/cpsc371\_ai
+\end{center}
+
+\section{Architecture}
+\subsection{Neural Net Genome}
+The neural net genome is the genome used by my genetic algorithm. It has a list of weights which act as
+genes and allow the genome to be converted into a neural net. Mutate works by for each gene flipping a coin
+and if it's a 1 adding (+/-)0\%-200\% to the gene. Crossover works by randomly selecting genes from each
+parent.
+
+\subsection{Algorithm}
+The genetic algorithm works by establishing a population of random genomes and then selecting a configurable
+amount of elites from that population for the next population then making up the rest from crossover and
+mutations. Elites are chosen based on fitness which is given by a lambda that is provided to the algorithm.
+The use of a lambda makes the algorithm adaptable to any neural net based problem. With a bit more work
+the algorithm could be generalized to work with a virtual Genome type allowing evolution of solutions to
+many more types of problems. 
+\newpage
+
+\section{Results}
+I did not have enough time to get good sized data for the Rubik's Cube problem so I graphed the xor problem instead. I had an experiment running on
+a school computer via ssh but a bit after the halfway mark somebody powered off the machine. I mistakenly thought I still had enough time to get
+the data I wanted so all I actually had time to get was the following small subset of data.
+
+\subsection{cube}
+\includegraphics[width=16cm]{cube_chart.jpg}\\
+The data I got for the cube was so little so as to be basically worthless. This is a chart of the average, it looks like elite and crossover help
+a population as a whole to get better and while mutation may add useful traits it does not help the average.
+
+\subsection{xor}
+There was no time to make charts but from looking at the data it seems that mutation generally hurts the neural nets which make sense. It looks
+like the best way to go is a fair amount of elite with a lot of crossover. I'm actually surprised how well crossover worked. Stochastic back
+propagation lead me to believe that all of the weights were deeply interdependent but it looks like, given enough time crossover was able to do a
+good job.
+%\subsubsection{heatmaps}
+%\includegraphics[width=linewidth]{1.png}\\
+%\includegraphics[width=linewidth]{2.png}\\
+%\includegraphics[width=linewidth]{3.png}\\
+%\includegraphics[width=linewidth]{4.png}\\
+%\includegraphics[width=linewidth]{5.png}\\
+\end{document}
