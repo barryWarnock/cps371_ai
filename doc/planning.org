@@ -176,3 +176,7 @@ https://learn.unbc.ca/bbcswebdav/pid-326781-dt-content-rid-1413526_1/courses/CPS
   - takes a list of start states in its fitness function and its 
     fitness is its average difference between moves taken and 
     minimum moves
+** remaining work
+- tests
+- cubesolver
+- minor fixes

@@ -511,3 +511,15 @@ bool Rubiks_Cube::equal_to(Searchable *other) {
     if (!otherCube) return false;
     else return this->cubeString == otherCube->cubeString;
 }
+
+void permute_cube(std::shared_ptr<Rubiks_Cube> *cube, int depth) {
+    Cube_Axis axis;
+    int slice;
+    Cube_Direction direction;
+    for (int i = 0; i < depth; i++) {
+        slice = rand() % (*cube)->size();
+        direction = (Cube_Direction)(rand() % 2);
+        axis = (Cube_Axis)(rand() % 3);
+        (*cube).reset((*cube)->do_move(axis, slice, direction));
+    }
+}

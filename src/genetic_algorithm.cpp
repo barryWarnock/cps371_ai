@@ -1,12 +1,9 @@
-#include <iostream>
-
 #include <cmath>
 #include <assert.h>
 #include <map>
 #include <algorithm>
 #include <list>
 #include <random>
-#include <iomanip>
 #include "../include/genetic_algorithm.h"
 using namespace std;
 

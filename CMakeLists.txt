@@ -15,6 +15,6 @@ set(SOURCE_FILES
         include/neural_net.h include/neural_net_ui.h src/neural_net_ui.cpp include/stochastic_back_propogation.h
         src/stochastic_back_propogation.cpp include/serialize_cube.h src/serialize_cube.cpp include/neural_net_genome.h
         include/genetic_algorithm.h src/neural_net_genome.cpp src/genetic_algorithm.cpp include/genetic_algorithm_ui.h
-        src/genetic_algorithm_ui.cpp)
+        src/genetic_algorithm_ui.cpp include/net_cube_solver.h src/net_cube_solver.cpp test/genetic_algorithm_tests.cpp)
 
 add_executable(cpsc371_ai ${SOURCE_FILES})

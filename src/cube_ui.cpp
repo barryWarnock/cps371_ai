@@ -82,15 +82,7 @@ void randomly_rotate(shared_ptr<Rubiks_Cube> *cube) {
     cout << "What depth would you like to permute the cube to: ";
     cin >> depth;
 
-    Cube_Axis axis;
-    int slice;
-    Cube_Direction direction;
-    for (int i = 0; i < depth; i++) {
-        slice = rand() % (*cube)->size();
-        direction = (Cube_Direction)(rand() % 2);
-        axis = (Cube_Axis)(rand() % 3);
-        (*cube).reset((*cube)->do_move(axis, slice, direction));
-    }
+    permute_cube(cube, depth);
 }
 
 void view_cube(shared_ptr<Rubiks_Cube> cube) {

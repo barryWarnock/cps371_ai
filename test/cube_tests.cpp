@@ -126,7 +126,7 @@ int rotate_2x2_tests() {
     return failed;
 }
 
-bool test_sort(shared_ptr<Rubiks_Cube> cube, shared_ptr<Rubiks_Cube> goal, string expected) {
+bool test_search(shared_ptr<Rubiks_Cube> cube, shared_ptr<Rubiks_Cube> goal, string expected) {
     A_Star_Search search = A_Star_Search();
     shared_ptr<Search_Node> solved = search.find_path(cube, goal);
     bool correct = solved->self->get_state() == expected;
@@ -136,20 +136,20 @@ bool test_sort(shared_ptr<Rubiks_Cube> cube, shared_ptr<Rubiks_Cube> goal, strin
     return correct;
 }
 
-int sort_3x3_depth_3() {
+int search_3x3_depth_3() {
     shared_ptr<Rubiks_Cube> cube = make_shared<Rubiks_Cube>(Rubiks_Cube(3));
     cube.reset(cube->do_move("X1CW"));
     cube.reset(cube->do_move("X1CW"));
     cube.reset(cube->do_move("Z2CW"));
-    return !test_sort(cube, make_shared<Rubiks_Cube>(Rubiks_Cube(3)), "wwwwwwwwwyyyyyyyyybbbbbbbbbgggggggggooooooooorrrrrrrrr");
+    return !test_search(cube, make_shared<Rubiks_Cube>(Rubiks_Cube(3)), "wwwwwwwwwyyyyyyyyybbbbbbbbbgggggggggooooooooorrrrrrrrr");
 }
 
-int sort_2x2_depth_3() {
+int search_2x2_depth_3() {
     shared_ptr<Rubiks_Cube> cube = make_shared<Rubiks_Cube>(Rubiks_Cube(2));
     cube.reset(cube->do_move("X1CW"));
     cube.reset(cube->do_move("X1CW"));
     cube.reset(cube->do_move("Z0CW"));
-    return !test_sort(cube, make_shared<Rubiks_Cube>(Rubiks_Cube(2)), "wwwwyyyybbbbggggoooorrrr");
+    return !test_search(cube, make_shared<Rubiks_Cube>(Rubiks_Cube(2)), "wwwwyyyybbbbggggoooorrrr");
 }
 
 int cube_tests() {
@@ -158,8 +158,8 @@ int cube_tests() {
     int failed = 0;
     failed += rotate_3x3_tests();
     failed += rotate_2x2_tests();
-    failed += sort_3x3_depth_3();
-    failed += sort_2x2_depth_3();
+    failed += search_3x3_depth_3();
+    failed += search_2x2_depth_3();
 
     cout << "cube tests complete" << endl << endl;
 

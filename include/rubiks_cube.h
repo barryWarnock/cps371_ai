@@ -57,5 +57,6 @@ public:
     virtual bool equal_to(Searchable *other); //it's probably just me not understanding operator overloading well enough but it seemed needlessly messy for this
 };
 
+void permute_cube(std::shared_ptr<Rubiks_Cube> *cube, int depth);
 
 #endif //RUBIKS_CUBE_H

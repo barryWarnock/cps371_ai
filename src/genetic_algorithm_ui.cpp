@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "../include/genetic_algorithm.h"
 #include "cmath"
+#include "../include/net_cube_solver.h"
+#include "../include/search_facade.h"
 using namespace std;
 
 void xor_experiment();
@@ -109,11 +111,58 @@ void xor_experiment() {
     };
 
     general_experiment(xor_fitness, topology,
-                       500, 5000, 500,
+                       100, 1500, 100,
                        1000, 10000, 1000);
 }
 
 
 void cube_experiment() {
+    cout << "how many cubes would you like to make the algorithm solve: ";
+    int numCubes;
+    cin >> numCubes;
 
+    cout << "permute the cubes to what depth: ";
+    int depth;
+    cin >> depth;
+
+    cout << "how many moves should a genome be allowed to make on each cube: ";
+    int maxMoves;
+    cin >> maxMoves;
+
+    cout << "generating cubes, please wait" << endl;
+
+    vector<int> topology = {324,400,8};
+
+    auto goalCube = make_shared<Rubiks_Cube>(Rubiks_Cube(3));
+    vector<pair<shared_ptr<Rubiks_Cube>, int> > cubes;
+
+    for (int i = 0; i < numCubes; i++) {
+        auto cube = make_shared<Rubiks_Cube>(Rubiks_Cube(3));
+        permute_cube(&cube, depth);
+
+        auto searchResult = search(BFS, cube, goalCube);
+        int solvableIn = searchResult->depth;
+
+        cubes.push_back(make_pair(cube, solvableIn));
+    }
+
+    auto cube_fitness = [&cubes, maxMoves](Neural_Net_Genome* genome) {
+        Neural_Net net = genome->get_as_net();
+
+        int fitness = 0;
+        for (auto cubePair : cubes) {
+            int distance = solve_cube_with_net(&net, cubePair.first, maxMoves);
+            if (distance == -1) {
+                fitness += 0;//punish a genome for not solving a cube
+            } else {
+                fitness += (maxMoves-abs(cubePair.second-distance));
+            }
+        }
+
+        return fitness;
+    };
+
+    general_experiment(cube_fitness, topology,
+                       10, 10, 100,
+                       100, 100, 1000);
 }

@@ -1,8 +1,6 @@
 #ifndef SEARCH_H
 #define SEARCH_H
-#include <string>
 #include "searchable.h"
-#include <vector>
 #include <memory>
 
 class Search {

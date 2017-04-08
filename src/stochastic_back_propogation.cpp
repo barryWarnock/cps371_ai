@@ -1,7 +1,6 @@
 
 #include <random>
 #include <memory>
-#include <cstring>
 #include "../include/stochastic_back_propogation.h"
 
 using namespace std;

@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <set>
 #include "../include/breadth_first_search.h"
-#include "../include/searchable.h"
 
 using namespace std;
 

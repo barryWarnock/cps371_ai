@@ -7,6 +7,7 @@ int main() {
 
     failed += cube_tests();
     failed += neural_net_tests();
+    failed += genetic_algorithm_tests();
 
     if (failed) cout << "Failed " << failed << " tests" << endl;
     else cout << "All tests passed" << endl;

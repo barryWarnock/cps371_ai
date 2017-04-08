@@ -2,7 +2,7 @@ FLAGS = -O3 -fopenmp
 CPP = g++ -c $(FLAGS)  $< -o $@
 LINK = g++ $(FLAGS) $^ -o $@
 
-bin/ai: build/main.o build/rubiks_cube.o  build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/record_search_results.o build/cube_experiments.o build/sbp_impl.o build/neural_net.o build/neural_net_ui.o build/stochastic_back_propogation.o build/serialize_cube.o build/genetic_algorithm_ui.o build/neural_net_genome.o build/genetic_algorithm.o
+bin/ai: build/main.o build/rubiks_cube.o  build/breadth_first_search.o build/a_star_search.o build/search_facade.o build/cube_ui.o build/ui.o build/record_search_results.o build/cube_experiments.o build/sbp_impl.o build/neural_net.o build/neural_net_ui.o build/stochastic_back_propogation.o build/serialize_cube.o build/genetic_algorithm_ui.o build/neural_net_genome.o build/genetic_algorithm.o build/net_cube_solver.o
 	$(LINK)
 
 build/main.o: src/main.cpp 
@@ -56,7 +56,10 @@ build/neural_net_genome.o: src/neural_net_genome.cpp include/neural_net_genome.h
 build/genetic_algorithm.o: src/genetic_algorithm.cpp include/genetic_algorithm.h
 	$(CPP)
 
+build/net_cube_solver.o: src/net_cube_solver.cpp include/net_cube_solver.h
+	$(CPP)
+
 tests: test/run_tests
 
-test/run_tests: build/rubiks_cube.o build/a_star_search.o test/cube_tests.cpp test/neural_net_tests.cpp build/neural_net.o build/sbp_impl.o test/tests.cpp test/tests.h
-	g++ $^ -o $@
+test/run_tests: build/rubiks_cube.o build/a_star_search.o build/genetic_algorithm.o build/neural_net_genome.o test/genetic_algorithm_tests.cpp test/cube_tests.cpp test/neural_net_tests.cpp build/neural_net.o build/sbp_impl.o test/tests.cpp test/tests.h 
+	g++ -fopenmp $^ -o $@
